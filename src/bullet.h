@@ -1,31 +1,34 @@
-#ifndef item_h
-#define item_h
+#ifndef bullet_h
+#define bullet_h
 
-typedef struct item_t item_t;
+typedef struct bullet_t bullet_t;
 
 #include <stdint.h>
 
 #include "body.h"
 #include "sprite.h"
 
-extern const uint32_t ITEM_ALIVE;
-extern const uint32_t ITEM_FALLS;
-extern const uint32_t ITEM_SEEKS;
+extern const uint32_t BULLET_ALIVE;
+extern const uint32_t BULLET_FALLS;
+extern const uint32_t BULLET_SEEKS;
 
-struct item_t{
+struct bullet_t{
 	uint32_t type;
 	body_t *body;
 	sprite_t *sprite;
 	uint32_t flags;
+	
+	uint8_t bounces;
+	uint32_t expiration_frame;
 };
 
-item_t *item_create(void);
-void item_delete(item_t *item);
+bullet_t *bullet_create(void);
+void bullet_delete(bullet_t *item);
 
-void item_update(item_t *item);
+void bullet_update(bullet_t *item);
 
-#include "item_list.h"
+#include "bullet_list.h"
 
-item_t *item_list_get_dead(item_list_t *list);
+bullet_t *bullet_list_get_dead(bullet_list_t *list);
 
 #endif

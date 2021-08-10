@@ -16,18 +16,18 @@ player_t *player_create(void){
    
 	player->body->rect->x = 0;
 	player->body->rect->y = 0;
-	player->body->rect->w = 16;
-	player->body->rect->h = 32;
+	player->body->rect->w = 14;
+	player->body->rect->h = 30;
 	
-	player->fall_speed = 4.8;
+	player->fall_speed = 4.00;
 	player->fall_accel = 0.12;
 	
-	player->ground_speed = 3.0;
-	player->ground_accel = 0.1;
-	player->ground_decel = 0.12;
+	player->ground_speed = 1.50;
+	player->ground_accel = 0.04;
+	player->ground_decel = 0.08;
 	
-	player->jump_force = -5.0;
-	player->jump_brake = -1.5;
+	player->jump_force = -3.0; // -5.0;
+	player->jump_brake = -0.5; // -1.5;
 
 	player->face_dir = DIR_R;
 	player->ctrl_dir = DIR_X;
@@ -79,7 +79,7 @@ void player_update_controls(player_t *player, game_t *game){
 		player->face_dir = DIR_R;
 		player->ctrl_dir = DIR_R;
 		if(player->body->vx < 0){
-			player->body->vx += player->ground_accel;
+			player->body->vx += player->ground_decel;
 		}else if(player->body->vx < player->ground_speed){
 			player->body->vx = fmin(player->ground_speed, player->body->vx + player->ground_accel);
 		}
@@ -87,7 +87,7 @@ void player_update_controls(player_t *player, game_t *game){
 		player->face_dir = DIR_L;
 		player->ctrl_dir = DIR_L;
 		if(player->body->vx > 0){
-			player->body->vx -= player->ground_accel;
+			player->body->vx -= player->ground_decel;
 		}else if(player->body->vx > -player->ground_speed){
 			player->body->vx = fmax(-player->ground_speed, player->body->vx - player->ground_accel);
 		}

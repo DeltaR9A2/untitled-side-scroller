@@ -46,14 +46,14 @@ add_anim("p_generic", "generic_skid_l", 32 + 22,  1,  8);
 add_fset("p_blue_robot", "player_blue_robot.png",  8,  8, false);
 
 add_anim("p_blue_robot", "player_idle_r",  0,  1,  1);
-add_anim("p_blue_robot", "player_move_r",  1,  6, 10);
+add_anim("p_blue_robot", "player_move_r",  1,  6,  8);
 add_anim("p_blue_robot", "player_jump_r", 16,  1,  1);
 add_anim("p_blue_robot", "player_hang_r", 17,  1,  1);
 add_anim("p_blue_robot", "player_fall_r", 18,  1,  1);
 add_anim("p_blue_robot", "player_skid_r",  7,  1,  1);
 
 add_anim("p_blue_robot", "player_idle_l", 32 +  0,  1,  1);
-add_anim("p_blue_robot", "player_move_l", 32 +  1,  6, 10);
+add_anim("p_blue_robot", "player_move_l", 32 +  1,  6,  8);
 add_anim("p_blue_robot", "player_jump_l", 32 + 16,  1,  1);
 add_anim("p_blue_robot", "player_hang_l", 32 + 17,  1,  1);
 add_anim("p_blue_robot", "player_fall_l", 32 + 18,  1,  1);
