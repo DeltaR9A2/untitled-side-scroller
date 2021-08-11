@@ -10,6 +10,10 @@ typedef struct player_t player_t;
 #include "sprite.h"
 #include "physics.h"
 
+extern const uint32_t DIR_X;
+extern const uint32_t DIR_R;
+extern const uint32_t DIR_L;
+
 struct player_t{
 	body_t *body;
 	sprite_t *sprite;

@@ -51,8 +51,12 @@ SDL_Surface *load_image(const char *fn){
 }
 
 SDL_Surface *stb_load_image(const char *fn){
+	#ifdef DEBUG
 	printf("Enter load_image...\n");
 	printf("Loading %s\n", fn);
+	fflush(stdout);
+	#endif
+	
 	image_t *im;
 	SDL_Surface *tmp, *final;
 	

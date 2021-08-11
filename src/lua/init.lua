@@ -43,21 +43,38 @@ add_anim("p_generic", "generic_hang_l", 32 + 18,  1,  8);
 add_anim("p_generic", "generic_fall_l", 32 + 20,  1,  8);
 add_anim("p_generic", "generic_skid_l", 32 + 22,  1,  8);
 
-add_fset("p_blue_robot", "player_blue_robot.png",  8,  8, false);
+--add_fset("p_blue_robot", "player_blue_robot.png",  8,  8, false);
+--add_anim("p_blue_robot", "player_idle_r",  0,  1,  1);
+--add_anim("p_blue_robot", "player_move_r",  1,  6,  8);
+--add_anim("p_blue_robot", "player_jump_r", 16,  1,  1);
+--add_anim("p_blue_robot", "player_hang_r", 17,  1,  1);
+--add_anim("p_blue_robot", "player_fall_r", 18,  1,  1);
+--add_anim("p_blue_robot", "player_skid_r",  7,  1,  1);
+
+--add_anim("p_blue_robot", "player_idle_l", 32 +  0,  1,  1);
+--add_anim("p_blue_robot", "player_move_l", 32 +  1,  6,  8);
+--add_anim("p_blue_robot", "player_jump_l", 32 + 16,  1,  1);
+--add_anim("p_blue_robot", "player_hang_l", 32 + 17,  1,  1);
+--add_anim("p_blue_robot", "player_fall_l", 32 + 18,  1,  1);
+--add_anim("p_blue_robot", "player_skid_l", 32 +  7,  1,  1);
+
+add_fset("p_blue_robot", "player_blue_robot_small.png",  8,  8, false);
 
 add_anim("p_blue_robot", "player_idle_r",  0,  1,  1);
 add_anim("p_blue_robot", "player_move_r",  1,  6,  8);
+add_anim("p_blue_robot", "player_skid_r",  7,  1,  1);
+
 add_anim("p_blue_robot", "player_jump_r", 16,  1,  1);
 add_anim("p_blue_robot", "player_hang_r", 17,  1,  1);
 add_anim("p_blue_robot", "player_fall_r", 18,  1,  1);
-add_anim("p_blue_robot", "player_skid_r",  7,  1,  1);
 
-add_anim("p_blue_robot", "player_idle_l", 32 +  0,  1,  1);
-add_anim("p_blue_robot", "player_move_l", 32 +  1,  6,  8);
-add_anim("p_blue_robot", "player_jump_l", 32 + 16,  1,  1);
-add_anim("p_blue_robot", "player_hang_l", 32 + 17,  1,  1);
-add_anim("p_blue_robot", "player_fall_l", 32 + 18,  1,  1);
-add_anim("p_blue_robot", "player_skid_l", 32 +  7,  1,  1);
+add_anim("p_blue_robot", "player_idle_l",  8,  1,  1);
+add_anim("p_blue_robot", "player_move_l",  9,  6,  8);
+add_anim("p_blue_robot", "player_skid_l", 15,  1,  1);
+
+add_anim("p_blue_robot", "player_jump_l", 19,  1,  1);
+add_anim("p_blue_robot", "player_hang_l", 20,  1,  1);
+add_anim("p_blue_robot", "player_fall_l", 21,  1,  1);
 
 add_fset("npc_sprites", "npc_sprites.png",  16,  8, false)
 
@@ -82,12 +99,12 @@ function add_door(map_a, xa, ya, map_b, xb, yb)
 --	door_name = map_a .. "_" .. xa .. "_" .. ya .. "_" .. map_b .. "_" .. xb .. "_" .. yb
 --	door_name = map_a .. "_" .. map_b .. "_door"
 
-	door_number = door_number + 1;
-
 	door_name = "door_" .. door_number
 	event_name = door_name .. "_event"
 	target_name = door_name .. "_target"
 	link_name = door_name .. "_link"
+
+	door_number = door_number + 1;
 
 	print("Adding door " .. door_name);
 
@@ -102,33 +119,42 @@ function add_door(map_a, xa, ya, map_b, xb, yb)
 	links[link_name .. "_b"] = {map_a, target_name .. "_a"}
 end
 
+print("Creating maps...");
 add_map("test_map", "map_test.png", "map_test_image.png")
 add_map("s2u", "map_shortcut_storage_to_utility.png", "map_shortcut_storage_to_utility_image.png");
 
+print("Creating doors...");
 add_door("test_map", 296, 1264, "s2u", 32, 128);
 add_door("test_map", 1360, 136, "s2u", 208, 72);
 add_door("test_map", 1840, 1184, "s2u",  208, 192);
 
+print("Editing map...");
 edit_map("test_map");
 
+print("Adding targets...");
 add_target("new_game_spawn", 200,  136, "npc_spawn_point", "none");
 
-add_fset("item_sprites", "item_sprites.png", 16, 16, false)
+
+print("Creating item animations...");
+add_fset("item_sprites", "item_sprites.png", 16, 16, false);
 
 --add_anim(fset, name, start, length, fps)
-add_anim("item_sprites", "item_money_bag",  0, 1, 8)
-add_anim("item_sprites", "item_candy",      1, 1, 8)
-add_anim("item_sprites", "item_heart",      2, 1, 8)
-add_anim("item_sprites", "item_star",       3, 1, 8)
-add_anim("item_sprites", "item_star_angry", 4, 1, 8)
-add_anim("item_sprites", "item_gear_big",   5, 1, 8)
-add_anim("item_sprites", "item_gear",       6, 1, 8)
+add_anim("item_sprites", "item_money_bag",  0, 1, 1);
+add_anim("item_sprites", "item_candy",      1, 1, 1);
+add_anim("item_sprites", "item_heart",      2, 1, 1);
+add_anim("item_sprites", "item_star",       3, 1, 1);
+add_anim("item_sprites", "item_star_angry", 4, 1, 1);
+add_anim("item_sprites", "item_gear_big",   5, 1, 1);
+add_anim("item_sprites", "item_gear",       6, 1, 1);
+
+add_anim("item_sprites", "bullet_default", 16, 1, 1);
 
 for i=1, 16 do add_item(1400 + i*16, 100, "item_gear") end
 add_item(1050, 400, "item_gear_big");
 for i=1, 3 do add_item(1900 + i*16, 740, "item_heart") end
 
-
-move_player_to_map("test_map")
+print("Initializing player...");
+move_player_to_map("test_map");
 move_player_to_target("new_game_spawn");
 
+print("End of lua script.");

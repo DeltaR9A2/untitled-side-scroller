@@ -21,4 +21,10 @@ struct body_t{
 body_t *body_create(void);
 void body_delete(body_t *body);
 
+rect_t *body_get_rect(body_t *body);
+
+void body_set_size(body_t *body, double w, double h);
+void body_move_to(body_t *body, rect_t *rect);
+void body_set_velocity(body_t *body, double vx, double vy);
+
 #endif

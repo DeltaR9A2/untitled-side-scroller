@@ -17,4 +17,6 @@ void sprite_delete(sprite_t *sprite);
 
 void sprite_set_anim(sprite_t *sprite, anim_t *anim);
 
+void sprite_move_to(sprite_t *sprite, rect_t *rect);
+
 #endif

@@ -187,6 +187,26 @@ void camera_draw_items(camera_t *camera, game_t *game){
 	}
 }
 
+void camera_draw_bullets(camera_t *camera, game_t *game){
+	bullet_node_t *iter = game->bullets->head;
+	
+	sprite_t *cur_sprite;
+	
+	while(iter != NULL){
+		if(bullet_is_alive(iter->data)){
+			cur_sprite = bullet_get_sprite(iter->data);
+			if(cur_sprite != NULL){
+				#ifdef DEBUG
+				camera_debug_rect(camera, cur_sprite->rect, 0x22AADD22);
+				#endif
+				camera_draw_sprite(camera, cur_sprite);
+			}
+		}
+		
+		iter = iter->next;
+	}
+}
+
 void camera_draw_game(camera_t *camera, game_t *game){
 	camera->view->x = floor(camera->view->x);
 	camera->view->y = floor(camera->view->y);
@@ -207,6 +227,7 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	camera_draw_surface(camera, game->active_map->image);
 	camera_draw_targets(camera, game);
 	camera_draw_items(camera, game);
+	camera_draw_bullets(camera, game);
 
 	camera_draw_player(camera, game->player);
 

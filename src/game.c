@@ -79,6 +79,16 @@ void game_update_map(game_t *game){
 			}
 		}
 	}
+	
+	for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
+		if(bullet_is_alive(iter->data)){
+			bullet_update(iter->data);
+			do_physics_to_it(bullet_get_body(iter->data), game->active_map->terrain_rects, game->active_map->platform_rects);
+			//if(iter->data->body->flags & BLOCKED_MASK){
+			//	iter->data->flags &= !BULLET_ALIVE;
+			//}
+		}
+	}
 }
 
 static void game_add_default_map(game_t *game){
@@ -119,7 +129,7 @@ game_t *game_create(core_t *core){
 	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
 	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
 	
-  printf("Creating LUA state.\n");
+	printf("Creating LUA state.\n");
 	game->LUA = lua_create();
 	lua_set_game(game);
 	
@@ -134,7 +144,6 @@ game_t *game_create(core_t *core){
 	lua_call(game->LUA, 0, 0);
 
 	printf("[>>> End LUA Execution <<<]\n");
-
 
 	player_update(game->player, game);
 	
@@ -189,6 +198,18 @@ void game_fast_frame(game_t *game){
 				target_activate(game->active_target, game);
 			}
 		}
+		
+		if(controller_just_pressed(game->controller, BTN_B)){
+			bullet_t *new_bullet = bullet_list_get_dead(game->bullets);
+			bullet_init(new_bullet, 300, anim_dict_get(game->anims, "bullet_default"));
+			bullet_move_to(new_bullet, game->player->body->rect);
+			if(game->player->face_dir == DIR_R){
+				bullet_set_velocity(new_bullet,  4, 0);
+			}else{
+				bullet_set_velocity(new_bullet, -4, 0);
+			}
+		}
+		
 		if(controller_just_pressed(game->controller, BTN_START)){
 			game->mode = GAME_MODE_MENU;
 			camera_set_fade(game->camera, 0x000000CC);
@@ -263,7 +284,7 @@ void game_create_data_structures(game_t *game){
 
 	game->maps = map_dict_create();
 	game->events = event_dict_create();
-
+	game->bullets = bullet_list_create();
 //	game->targets = target_dict_create();
 //	game->items = item_list_create();
 }
@@ -271,7 +292,7 @@ void game_create_data_structures(game_t *game){
 void game_delete_data_structures(game_t *game){
 //	item_list_delete(game->items);
 //	target_dict_delete(game->targets);
-
+	bullet_list_delete(game->bullets);
 	event_dict_delete(game->events);
 	map_dict_delete(game->maps);
 	

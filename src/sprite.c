@@ -26,3 +26,6 @@ void sprite_set_anim(sprite_t *sprite, anim_t *anim){
 	}
 }
 
+void sprite_move_to(sprite_t *sprite, rect_t *rect){
+	rect_move_to(sprite->rect, rect);
+}

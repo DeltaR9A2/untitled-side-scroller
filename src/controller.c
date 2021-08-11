@@ -52,11 +52,6 @@ controller_t *controller_create(void){
 	controller->pressed = BTN_NONE;
 	controller->previous = BTN_NONE;
 	
-	#ifdef DEBUG
-	printf("Joystick Count: %i\n", SDL_NumJoysticks());
-	printf("Joystick Event State: %i\n", SDL_JoystickEventState(SDL_ENABLE));
-	#endif
-	
 	SDL_JoystickOpen(0);
 	
 	return controller;
@@ -174,10 +169,6 @@ void controller_poll_events(controller_t *c){
 				c->pressed |= BTN_R | BTN_D;
 			}
 		}else if(e.type == SDL_JOYBUTTONDOWN){
-			#ifdef DEBUG
-			printf("JOYBUTTON %i \n", e.jbutton.button);
-			#endif
-			
 			if(e.jbutton.button == 0){
 				c->pressed |= BTN_A;
 			}else if(e.jbutton.button == 1){

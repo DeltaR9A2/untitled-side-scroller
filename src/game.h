@@ -32,6 +32,7 @@ extern const uint32_t GAME_MESSAGE_LEN;
 
 #include "map.h"
 #include "target.h"
+#include "bullet.h"
 
 struct game_t{
 	core_t *core;
@@ -57,6 +58,8 @@ struct game_t{
 
 	map_t *active_map;
 	target_t *active_target;
+	
+	bullet_list_t *bullets;
 
 	lua_State *LUA;
 

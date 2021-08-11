@@ -24,3 +24,19 @@ void body_delete(body_t *body){
 	free(body);
 }
 
+rect_t *body_get_rect(body_t *body){
+	return body->rect;
+}
+
+void body_set_size(body_t *body, double w, double h){
+	rect_set_size(body->rect, w, h);
+}
+
+void body_move_to(body_t *body, rect_t *rect){
+	rect_move_to(body->rect, rect);
+}
+
+void body_set_velocity(body_t *body, double vx, double vy){
+	body->vx = vx;
+	body->vy = vy;
+}
