@@ -27,8 +27,8 @@ void item_update(item_t *item){
 		item->body->vy = fmin(10.0, item->body->vy + 0.35);
 	}
 
-	item->sprite->step += 1;
-	rect_move_to(item->sprite->rect, item->body->rect);
+	sprite_update(item->sprite);
+	sprite_move_to(item->sprite, item->body->rect);
 }
 
 item_t *item_list_get_dead(item_list_t *list){

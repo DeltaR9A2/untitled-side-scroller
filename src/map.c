@@ -66,7 +66,7 @@ void map_init(map_t *map, const char *data_fn, const char *image_fn){
 void map_update(map_t *map){
 	for(target_node_t *iter = map->targets->head; iter; iter = iter->next){
 		if (iter->data->sprite != NULL){
-			iter->data->sprite->step += 1;
+			sprite_update(iter->data->sprite);
 		}
 	}
 	

@@ -20,5 +20,5 @@ target_t *target_create(void);
 void target_delete(target_t *target);
 
 void target_activate(target_t *target, game_t *game);
-
+void target_set_rect_numbers(target_t *target, uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 #endif

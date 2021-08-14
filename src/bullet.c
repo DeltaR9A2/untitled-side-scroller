@@ -54,8 +54,8 @@ void bullet_update(bullet_t *bullet){
 		bullet->body->vy = fmin(10.0, bullet->body->vy + 0.35);
 	}
 
-	bullet->sprite->step += 1;
-	rect_move_to(bullet->sprite->rect, bullet->body->rect);
+	sprite_update(bullet->sprite);
+	sprite_move_to(bullet->sprite, bullet->body->rect);
 }
 
 bool bullet_is_alive(bullet_t *bullet){

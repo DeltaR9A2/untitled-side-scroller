@@ -120,14 +120,7 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 #endif
 
 void camera_draw_sprite(camera_t *camera, sprite_t *sprite){
-	SDL_Rect draw_rect;
-
-	rect_copy_to_sdl(sprite->rect, &draw_rect);
-	
-	draw_rect.x -= (int)camera->view->x;
-	draw_rect.y -= (int)camera->view->y;
-
- 	anim_draw(sprite->anim, sprite->step, camera->buffer, &draw_rect);
+	sprite_draw(sprite, camera->buffer, (int)camera->view->x, (int)camera->view->y);
 }
 
 void camera_draw_surface(camera_t *camera, SDL_Surface *surface){

@@ -23,14 +23,13 @@ void target_delete(target_t *target){
 }
 
 void target_activate(target_t *target, game_t *game){
-	lua_rawgeti(game->LUA, LUA_REGISTRYINDEX, target->event->lua_ref);
-	lua_pushstring(game->LUA, target->event->config);
-	
-	int retval = lua_pcall(game->LUA, 1, 0, 0);
 
-	if(retval != 0){
-		printf("WARNING: Event returned non-zero value.\n");
-		printf("LUA Error: %s\n", lua_tostring(game->LUA, 1));
-	}
 }
 
+void target_set_rect_numbers(target_t *target, uint32_t x, uint32_t y, uint32_t w, uint32_t h){
+	target->rect->x = x;
+	target->rect->y = y;
+	target->rect->w = w;
+	target->rect->h = h;
+
+};

@@ -6,8 +6,6 @@
 #include "game.h"
 #include "rect.h"
 
-#include "lua_bindings.h"
-
 const uint32_t GAME_MODE_MENU = 0;
 const uint32_t GAME_MODE_PLAY = 1;
 const uint32_t GAME_MODE_DIALOGUE = 2;
@@ -57,7 +55,7 @@ void game_update_map(game_t *game){
 
 	for(target_node_t *iter = game->active_map->targets->head; iter; iter = iter->next){
 		if(iter->data->sprite != NULL){
-			current_distance = (int32_t)rect_range_to(iter->data->sprite->rect, game->player->body->rect);
+			current_distance = (int32_t)rect_range_to(iter->data->rect, game->player->body->rect);
 			if(current_distance < nearest_distance){
 				nearest_distance = current_distance;
 				nearest_target = iter->data;
@@ -129,22 +127,41 @@ game_t *game_create(core_t *core){
 	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
 	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
 	
-	printf("Creating LUA state.\n");
-	game->LUA = lua_create();
-	lua_set_game(game);
+	////////////////////
+	fset_t *player_frames = fset_dict_get(game->fsets, "p_warrior");
+	fset_init(player_frames, "player_warrior.png", 8, 8, false);
 	
-	printf("Loading LUA scripts... ");
-	luaL_loadfile(game->LUA, "init.lua");
-	printf("OK\n");
-	
-	printf("[>>> Begin LUA Execution <<<]\n");
-	
-	// Turns out an unprotected LUA call is better than protected if all you
-	// want is a crash with file and line number.
-	lua_call(game->LUA, 0, 0);
+	anim_init(anim_dict_get(game->anims, "player_idle_r"), player_frames,  0, 6, 10);
+	anim_init(anim_dict_get(game->anims, "player_move_r"), player_frames,  8, 8, 10);
+	anim_init(anim_dict_get(game->anims, "player_skid_r"), player_frames,  6, 1, 10);
 
-	printf("[>>> End LUA Execution <<<]\n");
+	anim_init(anim_dict_get(game->anims, "player_jump_r"), player_frames, 16, 3, 10);
+	anim_init(anim_dict_get(game->anims, "player_hang_r"), player_frames, 19, 2, 10);
+	anim_init(anim_dict_get(game->anims, "player_fall_r"), player_frames, 21, 3, 10);
 
+	anim_init(anim_dict_get(game->anims, "player_idle_l"), player_frames, 32, 6, 10);
+	anim_init(anim_dict_get(game->anims, "player_move_l"), player_frames, 40, 8, 10);
+	anim_init(anim_dict_get(game->anims, "player_skid_l"), player_frames, 38, 1, 10);
+
+	anim_init(anim_dict_get(game->anims, "player_jump_l"), player_frames, 48, 3, 10);
+	anim_init(anim_dict_get(game->anims, "player_hang_l"), player_frames, 51, 2, 10);
+	anim_init(anim_dict_get(game->anims, "player_fall_l"), player_frames, 53, 3, 10);
+	////////////////////
+	fset_t *item_frames = fset_dict_get(game->fsets, "item_sprites");
+	fset_init(item_frames, "item_sprites.png", 16, 16, false);
+	
+	anim_init(anim_dict_get(game->anims, "bullet_default"), item_frames,  16, 1, 1);
+	////////////////////
+	
+	// add_map("test_map", "map_test.png", "map_test_image.png")
+	map_t *test_map = map_dict_get(game->maps, "test_map");
+	map_init(test_map, "map_test.png", "map_test_image.png");
+	
+	target_t *spawn_target = target_dict_get(test_map->targets, "new_game_spawn");
+	target_set_rect_numbers(spawn_target, 200, 136, 64, 64);
+	
+	game_select_map(game, "test_map");
+	
 	player_update(game->player, game);
 	
 	game_update_map(game);
@@ -154,8 +171,6 @@ game_t *game_create(core_t *core){
 
 void game_delete(game_t *game){
 	free(game->message);
-
-	lua_delete();
 
 	menu_delete(game->menu);	
 	font_delete(game->font);
