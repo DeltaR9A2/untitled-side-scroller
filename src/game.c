@@ -36,14 +36,6 @@ void game_set_message(game_t *game, const char *text){
 	font_draw_string(game->font, game->message, 8, 4, game->message_surface);
 }
 
-static uint32_t dialogue_timer = 0;
-void game_set_dialogue(game_t *game, const char *portrait, const char *message){
-	dialogue_timer = 0;
-
-	game->dialogue_portrait = load_image(portrait);
-	sprintf(game->dialogue_content, message);
-}
-
 void game_update_map(game_t *game){
 	if(game->active_map == NULL){ return; }
 	
@@ -81,10 +73,11 @@ void game_update_map(game_t *game){
 	for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
 		if(bullet_is_alive(iter->data)){
 			bullet_update(iter->data);
-			do_physics_to_it(bullet_get_body(iter->data), game->active_map->terrain_rects, game->active_map->platform_rects);
-			//if(iter->data->body->flags & BLOCKED_MASK){
-			//	iter->data->flags &= !BULLET_ALIVE;
-			//}
+			do_physics_to_it(
+				bullet_get_body(iter->data),
+				game->active_map->terrain_rects,
+				game->active_map->platform_rects
+			);
 		}
 	}
 }
@@ -95,9 +88,6 @@ static void game_add_default_map(game_t *game){
 }
 
 game_t *game_create(core_t *core){
-  printf("Begin game_create.\n");
-  fflush(stdout);
-  
 	game_t *game = malloc(sizeof(game_t));
 
 	game->core = core;
@@ -114,43 +104,32 @@ game_t *game_create(core_t *core){
 	
 	camera_init(game->camera, 640, 360);
 
-	game->message = calloc(GAME_MESSAGE_LEN, sizeof(char));
-	game->message_surface = create_surface(640-16, 6+font_get_height(game->font));
-	game->message_timeout = 0;
-
-	game->dialogue_content = calloc(GAME_DIALOGUE_LEN, sizeof(char));
-	game->dialogue_surface = create_surface(640-256, 100);
-	game->dialogue_portrait = NULL;
-
 	game_add_default_map(game);
 	game_select_map(game, "default");
 	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
 	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
 	
 	////////////////////
-	fset_t *player_frames = fset_dict_get(game->fsets, "p_warrior");
-	fset_init(player_frames, "player_warrior.png", 8, 8, false);
+	fset_t *player_frames = fset_load("player_warrior.png", 8, 8);
 	
-	anim_init(anim_dict_get(game->anims, "player_idle_r"), player_frames,  0, 6, 10);
-	anim_init(anim_dict_get(game->anims, "player_move_r"), player_frames,  8, 8, 10);
-	anim_init(anim_dict_get(game->anims, "player_skid_r"), player_frames,  6, 1, 10);
+	anim_create("player_idle_r", player_frames,  0, 6, 10);
+	anim_create("player_move_r", player_frames,  8, 8, 10);
+	anim_create("player_skid_r", player_frames,  6, 1, 10);
 
-	anim_init(anim_dict_get(game->anims, "player_jump_r"), player_frames, 16, 3, 10);
-	anim_init(anim_dict_get(game->anims, "player_hang_r"), player_frames, 19, 2, 10);
-	anim_init(anim_dict_get(game->anims, "player_fall_r"), player_frames, 21, 3, 10);
+	anim_create("player_jump_r", player_frames, 16, 3, 10);
+	anim_create("player_hang_r", player_frames, 19, 2, 10);
+	anim_create("player_fall_r", player_frames, 21, 3, 10);
 
-	anim_init(anim_dict_get(game->anims, "player_idle_l"), player_frames, 32, 6, 10);
-	anim_init(anim_dict_get(game->anims, "player_move_l"), player_frames, 40, 8, 10);
-	anim_init(anim_dict_get(game->anims, "player_skid_l"), player_frames, 38, 1, 10);
+	anim_create("player_idle_l", player_frames, 32, 6, 10);
+	anim_create("player_move_l", player_frames, 40, 8, 10);
+	anim_create("player_skid_l", player_frames, 38, 1, 10);
 
-	anim_init(anim_dict_get(game->anims, "player_jump_l"), player_frames, 48, 3, 10);
-	anim_init(anim_dict_get(game->anims, "player_hang_l"), player_frames, 51, 2, 10);
-	anim_init(anim_dict_get(game->anims, "player_fall_l"), player_frames, 53, 3, 10);
+	anim_create("player_jump_l", player_frames, 48, 3, 10);
+	anim_create("player_hang_l", player_frames, 51, 2, 10);
+	anim_create("player_fall_l", player_frames, 53, 3, 10);
 	////////////////////
-	fset_t *item_frames = fset_dict_get(game->fsets, "item_sprites");
-	fset_init(item_frames, "item_sprites.png", 16, 16, false);
-	
-	anim_init(anim_dict_get(game->anims, "bullet_default"), item_frames,  16, 1, 1);
+	fset_t *item_frames = fset_load("item_sprites.png", 16, 16);
+	anim_create("bullet_default", item_frames,  16,  1,  1);
 	////////////////////
 	
 	// add_map("test_map", "map_test.png", "map_test_image.png")
@@ -162,6 +141,7 @@ game_t *game_create(core_t *core){
 	
 	game_select_map(game, "test_map");
 	
+	sprite_set_anim(game->player->sprite, anim_get("player_idle_r"));
 	player_update(game->player, game);
 	
 	game_update_map(game);
@@ -216,7 +196,7 @@ void game_fast_frame(game_t *game){
 		
 		if(controller_just_pressed(game->controller, BTN_B)){
 			bullet_t *new_bullet = bullet_list_get_dead(game->bullets);
-			bullet_init(new_bullet, 300, anim_dict_get(game->anims, "bullet_default"));
+			bullet_init(new_bullet, 300, anim_get("bullet_default"));
 			bullet_move_to(new_bullet, game->player->body->rect);
 			if(game->player->face_dir == DIR_R){
 				bullet_set_velocity(new_bullet,  4, 0);
@@ -229,30 +209,7 @@ void game_fast_frame(game_t *game){
 			game->mode = GAME_MODE_MENU;
 			camera_set_fade(game->camera, 0x000000CC);
 		}
-
-	}else if(game->mode == GAME_MODE_DIALOGUE){
-		if(controller_just_pressed(game->controller, BTN_A) ||
-			controller_just_pressed(game->controller, BTN_B)){
-			game->mode = GAME_MODE_PLAY;
-		}
 	}
-}
-
-void game_draw_dialogue(game_t *game){
-	SDL_Rect draw_rect;
-
-	draw_rect.x = 0;
-	draw_rect.y = 0;
-	SDL_BlitSurface(game->dialogue_portrait, NULL, game->core->screen, &draw_rect);
-
-	SDL_FillRect(game->dialogue_surface, NULL, 0x000000FF);
-
-	if(dialogue_timer < strlen(game->dialogue_content)){	dialogue_timer += 1;	}
-	font_wrap_string(game->font, game->dialogue_content, 8, 3, 368, game->dialogue_surface);
-
-	draw_rect.x = game->dialogue_portrait->w;
-	draw_rect.y = 380-100;
-	SDL_BlitSurface(game->dialogue_surface, NULL, game->core->screen, &draw_rect);
 }
 
 void game_draw_hud(game_t *game){
@@ -270,8 +227,6 @@ void game_full_frame(game_t *game){
 
 	if(game->mode == GAME_MODE_MENU){
 		menu_draw(game->menu, game->core->screen);
-	}else if(game->mode == GAME_MODE_DIALOGUE){
-		game_draw_dialogue(game);
 	}else{
 		game_draw_hud(game);
 	}
@@ -291,31 +246,15 @@ void game_create_data_structures(game_t *game){
 	game->camera = camera_create();
 	game->player = player_create();
 
-	game->fsets = fset_dict_create();
-	game->anims = anim_dict_create();
-
-//	game->terrain_rects = rect_list_create();
-//	game->platform_rects = rect_list_create();
-
 	game->maps = map_dict_create();
 	game->events = event_dict_create();
 	game->bullets = bullet_list_create();
-//	game->targets = target_dict_create();
-//	game->items = item_list_create();
 }
 
 void game_delete_data_structures(game_t *game){
-//	item_list_delete(game->items);
-//	target_dict_delete(game->targets);
 	bullet_list_delete(game->bullets);
 	event_dict_delete(game->events);
 	map_dict_delete(game->maps);
-	
-//	rect_list_delete(game->platform_rects);
-//	rect_list_delete(game->terrain_rects);
-
-	anim_dict_delete(game->anims);
-	fset_dict_delete(game->fsets);
 
 	player_delete(game->player);
 	camera_delete(game->camera);

@@ -3,15 +3,10 @@
 
 #include <stdint.h>
 
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-
 typedef struct game_t game_t;
 
 extern const uint32_t GAME_MODE_MENU;
 extern const uint32_t GAME_MODE_PLAY;
-extern const uint32_t GAME_MODE_DIALOGUE;
 
 extern const uint32_t GAME_MESSAGE_LEN;
 
@@ -23,9 +18,6 @@ extern const uint32_t GAME_MESSAGE_LEN;
 #include "camera.h"
 #include "player.h"
 #include "controller.h"
-
-#include "fset_dict.h"
-#include "anim_dict.h"
 
 #include "event_dict.h"
 #include "map_dict.h"
@@ -48,9 +40,6 @@ struct game_t{
 	menu_t *menu;
 	
 	camera_t *camera;	
-	fset_dict_t *fsets;
-	anim_dict_t *anims;
-
 	player_t *player;
 
 	event_dict_t *events;
@@ -61,20 +50,11 @@ struct game_t{
 	
 	bullet_list_t *bullets;
 
-	lua_State *LUA;
-
 	//////////////////////////////
 	char *message;
 	uint32_t message_timeout;
 	SDL_Surface *message_surface;
 	//////////////////////////////
-
-	//////////////////////////////
-	char *dialogue_content;
-	SDL_Surface *dialogue_portrait;
-	SDL_Surface *dialogue_surface;
-	//////////////////////////////
-
 };
 
 game_t *game_create(core_t *core);
@@ -86,6 +66,5 @@ void game_full_frame(game_t *game);
 void game_select_map(game_t *game, const char *map_name);
 
 void game_set_message(game_t *game, const char *text);
-void game_set_dialogue(game_t *game, const char *portrait, const char *message);
 
 #endif

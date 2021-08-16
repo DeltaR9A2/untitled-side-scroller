@@ -17,16 +17,16 @@ player_t *player_create(void){
 	player->body->rect->x = 0;
 	player->body->rect->y = 0;
 	player->body->rect->w = 14;
-	player->body->rect->h = 30;
+	player->body->rect->h = 28;
 	
 	player->fall_speed = 4.00;
-	player->fall_accel = 0.12;
+	player->fall_accel = 0.10;
 	
-	player->ground_speed = 1.60;
+	player->ground_speed = 2.50;
 	player->ground_accel = 0.04;
-	player->ground_decel = 0.08;
+	player->ground_decel = 0.06;
 	
-	player->jump_force = -3.0;
+	player->jump_force = -4.0;
 	player->jump_brake = -0.5;
 
 	player->face_dir = DIR_R;
@@ -115,39 +115,39 @@ void player_update_animation(player_t *player, game_t *game){
 	if(player->body->flags & BLOCKED_D){
 		if(player->move_dir == DIR_X){
 			if(player->face_dir == DIR_R){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_idle_r"));
+				sprite_set_anim(player->sprite, anim_get("player_idle_r"));
 			}else if(player->face_dir == DIR_L){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_idle_l"));
+				sprite_set_anim(player->sprite, anim_get("player_idle_l"));
 			}
 		}else if(player->move_dir == DIR_R){
 			if(player->ctrl_dir == DIR_R){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_move_r"));
+				sprite_set_anim(player->sprite, anim_get("player_move_r"));
 			}else{
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_skid_r"));
+				sprite_set_anim(player->sprite, anim_get("player_skid_r"));
 			}
 		}else if(player->move_dir == DIR_L){
 			if(player->ctrl_dir == DIR_L){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_move_l"));
+				sprite_set_anim(player->sprite, anim_get("player_move_l"));
 			}else{
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_skid_l"));
+				sprite_set_anim(player->sprite, anim_get("player_skid_l"));
 			}
 		}
 	}else{
 		if(player->face_dir == DIR_R){
 			if(player->body->vy < -1.0){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_jump_r"));
+				sprite_set_anim(player->sprite, anim_get("player_jump_r"));
 			}else if(player->body->vy > 1.0){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_fall_r"));
+				sprite_set_anim(player->sprite, anim_get("player_fall_r"));
 			}else{
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_hang_r"));
+				sprite_set_anim(player->sprite, anim_get("player_hang_r"));
 			}
 		}else if(player->face_dir == DIR_L){
 			if(player->body->vy < -1.0){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_jump_l"));
+				sprite_set_anim(player->sprite, anim_get("player_jump_l"));
 			}else if(player->body->vy > 1.0){
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_fall_l"));
+				sprite_set_anim(player->sprite, anim_get("player_fall_l"));
 			}else{
-				sprite_set_anim(player->sprite, anim_dict_get(game->anims, "player_hang_l"));
+				sprite_set_anim(player->sprite, anim_get("player_hang_l"));
 			}
 		}
 	}

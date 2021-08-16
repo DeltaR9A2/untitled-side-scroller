@@ -2,7 +2,6 @@
 #include <stdint.h>
 
 #include "menu.h"
-#include "sdl_helpers.h"
 
 const uint32_t OPTION_LABEL_LEN = 32;
 const uint32_t MENU_MAX_OPTIONS = 8;

@@ -5,7 +5,7 @@
 
 #include <SDL.h>
 
-#include "sdl_helpers.h"
+#include "sprite.h"
 
 typedef struct core_t core_t;
 struct core_t{

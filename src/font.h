@@ -5,10 +5,12 @@
 
 #include <SDL.h>
 
-#include "sdl_helpers.h"
+#include "sprite.h"
 
 #define MAX_GLYPHS 256
+
 typedef struct font_t font_t;
+
 struct font_t{
 	SDL_Surface *glyphs[MAX_GLYPHS];
 	uint32_t head_kerns[MAX_GLYPHS];

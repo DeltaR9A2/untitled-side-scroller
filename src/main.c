@@ -4,6 +4,9 @@
 #include <SDL.h>
 #undef main
 
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
+
 #include "core.h"
 #include "game.h"
 #include "controller.h"
@@ -58,7 +61,6 @@ int main(void){
 
 	game_delete(game);
 	core_delete(core);
-	clear_image_cache();
 	
 	SDL_Quit();
 	

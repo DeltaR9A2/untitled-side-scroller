@@ -11,7 +11,7 @@ export REMOVE  := rm -rf
 ###############################
 
 # Debug Flags #####
-debug : export CFLAGS := $(CFLAGS) -g -Wall -Werror -D DEBUG
+debug : export CFLAGS := $(CFLAGS) -g -Wall -Werror -D DEBUG -O0
 debug : export LFLAGS := $(LFLAGS)
 ###################
 

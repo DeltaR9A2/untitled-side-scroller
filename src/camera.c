@@ -135,13 +135,7 @@ void camera_draw_surface(camera_t *camera, SDL_Surface *surface){
 }
 
 void camera_draw_player(camera_t *camera, player_t *player){
-	
 	if(player->flashing % 2 == 0){
-		#ifdef DEBUG
-		camera_debug_rect(camera, player->sprite->rect, 0x22DD2244);
-		camera_debug_rect(camera, player->body->rect, 0x2222DD44);
-		#endif
-		
 		camera_draw_sprite(camera, player->sprite);
 	}
 }
@@ -153,10 +147,6 @@ void camera_draw_targets(camera_t *camera, game_t *game)
 	{
 
 		if(iter->data->sprite != NULL){
-			#ifdef DEBUG
-			camera_debug_rect(camera, iter->data->sprite->rect, 0xDDAA2222);
-			#endif
-
 			camera_draw_sprite(camera, iter->data->sprite);
 		}
 		
@@ -169,9 +159,6 @@ void camera_draw_items(camera_t *camera, game_t *game){
 	while(iter != NULL){
 		if(iter->data->flags & ITEM_ALIVE){
 			if(iter->data->sprite != NULL){
-				#ifdef DEBUG
-				camera_debug_rect(camera, iter->data->sprite->rect, 0x22AADD22);
-				#endif
 				camera_draw_sprite(camera, iter->data->sprite);
 			}
 		}
@@ -189,9 +176,6 @@ void camera_draw_bullets(camera_t *camera, game_t *game){
 		if(bullet_is_alive(iter->data)){
 			cur_sprite = bullet_get_sprite(iter->data);
 			if(cur_sprite != NULL){
-				#ifdef DEBUG
-				camera_debug_rect(camera, cur_sprite->rect, 0x22AADD22);
-				#endif
 				camera_draw_sprite(camera, cur_sprite);
 			}
 		}

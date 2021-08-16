@@ -8,8 +8,6 @@ typedef struct map_t map_t;
 #include "target_dict.h"
 #include "cmap.h"
 
-#include "sdl_helpers.h"
-
 struct map_t{
 	rect_t *rect;
 

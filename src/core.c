@@ -2,6 +2,14 @@
 
 #include "core.h"
 
+//static SDL_Texture *create_texture(SDL_Renderer *render, int32_t w, int32_t h){
+//	return SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, w, h);
+//}
+
+static SDL_Texture *create_streaming_texture(SDL_Renderer *render, int32_t w, int32_t h){
+	return SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+}
+
 core_t *core_create(void){
 	core_t *core = malloc(sizeof(core_t));
 	
@@ -19,7 +27,7 @@ core_t *core_create(void){
 	core->active_rect.h = core->win_vh*2;
 
 	core->window = SDL_CreateWindow(
-		"Ninmu Nanmu: Love and Freedom",
+		"game",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		core->win_cw,
