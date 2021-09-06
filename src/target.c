@@ -12,7 +12,6 @@ target_t *target_create(void){
 	target->type = TARGET_NONE;
 	target->rect = rect_create();
 	target->sprite = NULL;
-	target->event = NULL;
 	
 	return target;
 }

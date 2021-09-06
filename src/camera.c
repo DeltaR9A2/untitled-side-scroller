@@ -106,14 +106,14 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 	sprintf(buffer, "Time: %06.2fs", ((double)game->step)/200.0);
 	PRINT_DEBUG_LINE
 
-	sprintf(buffer, "Player Pos: %4.0f,%4.0f", game->player->body->rect->x, game->player->body->rect->y);
-	PRINT_DEBUG_LINE
+//	sprintf(buffer, "Player Pos: %4.0f,%4.0f", game->player->body->rect->x, game->player->body->rect->y);
+//	PRINT_DEBUG_LINE
 
-	int npc_x = ((int)(game->player->body->rect->x/8.0)*8);
-	int npc_y = ((int)((game->player->body->rect->y-26)/8.0)*8)+8;
+//	int npc_x = ((int)(game->player->body->rect->x/8.0)*8);
+//	int npc_y = ((int)((game->player->body->rect->y-26)/8.0)*8)+8;
 
-	sprintf(buffer, "NPC Pos: %i,%i", npc_x, npc_y);
-	PRINT_DEBUG_LINE
+//	sprintf(buffer, "NPC Pos: %i,%i", npc_x, npc_y);
+//	PRINT_DEBUG_LINE
 
 	#undef PRINT_DEBUG_LINE
 }
@@ -135,9 +135,7 @@ void camera_draw_surface(camera_t *camera, SDL_Surface *surface){
 }
 
 void camera_draw_player(camera_t *camera, player_t *player){
-	if(player->flashing % 2 == 0){
-		camera_draw_sprite(camera, player->sprite);
-	}
+	camera_draw_sprite(camera, player_get_sprite(player));
 }
 
 void camera_draw_targets(camera_t *camera, game_t *game)
@@ -167,23 +165,6 @@ void camera_draw_items(camera_t *camera, game_t *game){
 	}
 }
 
-void camera_draw_bullets(camera_t *camera, game_t *game){
-	bullet_node_t *iter = game->bullets->head;
-	
-	sprite_t *cur_sprite;
-	
-	while(iter != NULL){
-		if(bullet_is_alive(iter->data)){
-			cur_sprite = bullet_get_sprite(iter->data);
-			if(cur_sprite != NULL){
-				camera_draw_sprite(camera, cur_sprite);
-			}
-		}
-		
-		iter = iter->next;
-	}
-}
-
 void camera_draw_game(camera_t *camera, game_t *game){
 	camera->view->x = floor(camera->view->x);
 	camera->view->y = floor(camera->view->y);
@@ -202,9 +183,7 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	#endif
 	
 	camera_draw_surface(camera, game->active_map->image);
-	camera_draw_targets(camera, game);
 	camera_draw_items(camera, game);
-	camera_draw_bullets(camera, game);
 
 	camera_draw_player(camera, game->player);
 

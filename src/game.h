@@ -19,12 +19,10 @@ extern const uint32_t GAME_MESSAGE_LEN;
 #include "player.h"
 #include "controller.h"
 
-#include "event_dict.h"
 #include "map_dict.h"
 
 #include "map.h"
 #include "target.h"
-#include "bullet.h"
 
 struct game_t{
 	core_t *core;
@@ -42,14 +40,11 @@ struct game_t{
 	camera_t *camera;	
 	player_t *player;
 
-	event_dict_t *events;
 	map_dict_t *maps;
 
 	map_t *active_map;
-	target_t *active_target;
+	//target_t *active_target;
 	
-	bullet_list_t *bullets;
-
 	//////////////////////////////
 	char *message;
 	uint32_t message_timeout;

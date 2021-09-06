@@ -6,14 +6,12 @@ typedef struct target_t target_t;
 #include "rect.h"
 #include "game.h"
 #include "sprite.h"
-#include "event.h"
 
 struct target_t{
-  uint8_t type;
-  rect_t *rect;
-  sprite_t *sprite;
-  event_t *event;
- 	uint32_t flags;
+	uint8_t type;
+	rect_t *rect;
+	sprite_t *sprite;
+	uint32_t flags;
 };
 
 target_t *target_create(void);

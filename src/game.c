@@ -11,7 +11,6 @@ const uint32_t GAME_MODE_PLAY = 1;
 const uint32_t GAME_MODE_DIALOGUE = 2;
 
 const uint32_t GAME_MESSAGE_LEN = 128;
-const uint32_t GAME_DIALOGUE_LEN = 128;
 
 void game_create_data_structures(game_t *game);
 void game_delete_data_structures(game_t *game);
@@ -41,36 +40,38 @@ void game_update_map(game_t *game){
 	
 	map_update(game->active_map);
 
-	target_t *nearest_target = NULL;
-	int32_t nearest_distance = 9999;
-	int32_t current_distance = 9999;
+//	target_t *nearest_target = NULL;
+//	int32_t nearest_distance = 9999;
+//	int32_t current_distance = 9999;
 
-	for(target_node_t *iter = game->active_map->targets->head; iter; iter = iter->next){
+	rect_t *player_rect = player_get_rect(game->player);
+
+	/*for(target_node_t *iter = game->active_map->targets->head; iter; iter = iter->next){
 		if(iter->data->sprite != NULL){
-			current_distance = (int32_t)rect_range_to(iter->data->rect, game->player->body->rect);
+			current_distance = (int32_t)rect_range_to(iter->data->rect, player_rect);
 			if(current_distance < nearest_distance){
 				nearest_distance = current_distance;
 				nearest_target = iter->data;
 			}
 		}
-	}
+	}*/
 
-	if(nearest_distance <= 32 && nearest_target != NULL){
+	/*if(nearest_distance <= 32 && nearest_target != NULL){
 		game->active_target = nearest_target;
 	}else{
 		game->active_target = NULL;
-	}
+	}*/
 
 	for(item_node_t *iter = game->active_map->items->head; iter; iter = iter->next){
 		if(iter->data->flags & ITEM_ALIVE){
-			if(rect_overlap(iter->data->body->rect, game->player->body->rect)){
+			if(rect_overlap(iter->data->body->rect, player_rect)){
 				game->hud->counter->count += 1;
 				iter->data->flags &= !ITEM_ALIVE;
 			}
 		}
 	}
 	
-	for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
+	/*for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
 		if(bullet_is_alive(iter->data)){
 			bullet_update(iter->data);
 			do_physics_to_it(
@@ -79,7 +80,7 @@ void game_update_map(game_t *game){
 				game->active_map->platform_rects
 			);
 		}
-	}
+	}*/
 }
 
 static void game_add_default_map(game_t *game){
@@ -106,28 +107,11 @@ game_t *game_create(core_t *core){
 
 	game_add_default_map(game);
 	game_select_map(game, "default");
-	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
-	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
+	player_move_to_coord(game->player, 128, 128);
+//	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
+//	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
 	
-	////////////////////
-	fset_t *player_frames = fset_load("player_warrior.png", 8, 8);
-	
-	anim_create("player_idle_r", player_frames,  0, 6, 10);
-	anim_create("player_move_r", player_frames,  8, 8, 10);
-	anim_create("player_skid_r", player_frames,  6, 1, 10);
 
-	anim_create("player_jump_r", player_frames, 16, 3, 10);
-	anim_create("player_hang_r", player_frames, 19, 2, 10);
-	anim_create("player_fall_r", player_frames, 21, 3, 10);
-
-	anim_create("player_idle_l", player_frames, 32, 6, 10);
-	anim_create("player_move_l", player_frames, 40, 8, 10);
-	anim_create("player_skid_l", player_frames, 38, 1, 10);
-
-	anim_create("player_jump_l", player_frames, 48, 3, 10);
-	anim_create("player_hang_l", player_frames, 51, 2, 10);
-	anim_create("player_fall_l", player_frames, 53, 3, 10);
-	////////////////////
 	fset_t *item_frames = fset_load("item_sprites.png", 16, 16);
 	anim_create("bullet_default", item_frames,  16,  1,  1);
 	////////////////////
@@ -141,7 +125,7 @@ game_t *game_create(core_t *core){
 	
 	game_select_map(game, "test_map");
 	
-	sprite_set_anim(game->player->sprite, anim_get("player_idle_r"));
+	sprite_anim_set(player_get_sprite(game->player), anim_get("player_idle_r"));
 	player_update(game->player, game);
 	
 	game_update_map(game);
@@ -162,7 +146,7 @@ void game_delete(game_t *game){
 
 void game_select_map(game_t *game, const char *map_name){
 	game->active_map = map_dict_get(game->maps, map_name);
-	game->active_target = NULL;
+//	game->active_target = NULL;
 	
 	rect_match_to(game->camera->bounds, game->active_map->rect);
 }
@@ -188,22 +172,22 @@ void game_fast_frame(game_t *game){
 		player_update(game->player, game);
 		game_update_map(game);
 
-		if(controller_just_pressed(game->controller, BTN_A)){
+		/*if(controller_just_pressed(game->controller, BTN_A)){
 			if(game->active_target != NULL){
 				target_activate(game->active_target, game);
 			}
-		}
+		}*/
 		
-		if(controller_just_pressed(game->controller, BTN_B)){
+		/*if(controller_just_pressed(game->controller, BTN_B)){
 			bullet_t *new_bullet = bullet_list_get_dead(game->bullets);
 			bullet_init(new_bullet, 300, anim_get("bullet_default"));
-			bullet_move_to(new_bullet, game->player->body->rect);
-			if(game->player->face_dir == DIR_R){
+			bullet_move_to(new_bullet, player_get_rect(game->player));
+			if(player_get_facing(game->player) == DIR_R){
 				bullet_set_velocity(new_bullet,  4, 0);
 			}else{
 				bullet_set_velocity(new_bullet, -4, 0);
 			}
-		}
+		}*/
 		
 		if(controller_just_pressed(game->controller, BTN_START)){
 			game->mode = GAME_MODE_MENU;
@@ -221,7 +205,7 @@ void game_full_frame(game_t *game){
 
 	game_fast_frame(game);
 
-	rect_move_to(game->camera->view, game->player->body->rect);
+	rect_move_to(game->camera->view, player_get_rect(game->player));
 	camera_draw_game(game->camera, game);
 	SDL_BlitSurface(game->camera->buffer, NULL, game->core->screen, NULL);
 
@@ -247,13 +231,9 @@ void game_create_data_structures(game_t *game){
 	game->player = player_create();
 
 	game->maps = map_dict_create();
-	game->events = event_dict_create();
-	game->bullets = bullet_list_create();
 }
 
 void game_delete_data_structures(game_t *game){
-	bullet_list_delete(game->bullets);
-	event_dict_delete(game->events);
 	map_dict_delete(game->maps);
 
 	player_delete(game->player);

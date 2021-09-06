@@ -5,7 +5,7 @@ typedef struct item_t item_t;
 
 #include <stdint.h>
 
-#include "body.h"
+#include "physics.h"
 #include "sprite.h"
 
 extern const uint32_t ITEM_ALIVE;
