@@ -153,19 +153,6 @@ void camera_draw_targets(camera_t *camera, game_t *game)
 	}
 }
 
-void camera_draw_items(camera_t *camera, game_t *game){
-	item_node_t *iter = game->active_map->items->head;
-	while(iter != NULL){
-		if(iter->data->flags & ITEM_ALIVE){
-			if(iter->data->sprite != NULL){
-				camera_draw_sprite(camera, iter->data->sprite);
-			}
-		}
-		
-		iter = iter->next;
-	}
-}
-
 void camera_draw_game(camera_t *camera, game_t *game){
 	camera->view->x = floor(camera->view->x);
 	camera->view->y = floor(camera->view->y);
@@ -184,7 +171,6 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	#endif
 	
 	camera_draw_surface(camera, game->active_map->image);
-	camera_draw_items(camera, game);
 
 	camera_draw_player(camera, game->player);
 

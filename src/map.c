@@ -11,13 +11,11 @@ map_t *map_create(void){
 	map->platform_rects = rect_list_create();
 	
 	map->targets = target_dict_create();
-	map->items = item_list_create();
 	
 	return map;
 }
 
 void map_delete(map_t *map){
-	item_list_delete(map->items);
 	target_dict_delete(map->targets);
 
 	rect_list_delete(map->platform_rects);
@@ -69,12 +67,4 @@ void map_update(map_t *map){
 			sprite_update(iter->data->sprite);
 		}
 	}
-	
-	for(item_node_t *iter = map->items->head; iter; iter = iter->next){
-		if(iter->data->flags & ITEM_ALIVE){
-			item_update(iter->data);
-			do_physics_to_it(iter->data->body, map->terrain_rects, map->platform_rects);
-		}
-	}
-
 }

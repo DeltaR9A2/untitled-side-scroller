@@ -4,7 +4,6 @@
 typedef struct map_t map_t;
 
 #include "rect_list.h"
-#include "item_list.h"
 #include "target_dict.h"
 #include "cmap.h"
 
@@ -17,7 +16,6 @@ struct map_t{
 	rect_list_t *platform_rects;
 
 	target_dict_t *targets;
-	item_list_t *items;
 };
 
 map_t *map_create(void);
