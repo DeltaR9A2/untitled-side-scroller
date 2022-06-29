@@ -105,6 +105,10 @@ game_t *game_create(core_t *core){
 	
 	camera_init(game->camera, 640, 360);
 
+    game->message = calloc(GAME_MESSAGE_LEN, sizeof(char));
+    game->message_surface = create_surface(640-256, 6+font_get_height(game->font));
+	game->message_timeout = 0;
+
 	game_add_default_map(game);
 	game_select_map(game, "default");
 	player_move_to_coord(game->player, 128, 128);

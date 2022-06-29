@@ -38,7 +38,7 @@ static void load_player_animations(void){
 	if(animations_are_loaded == false){
 		animations_are_loaded = true;
 		
-		fset_t *player_frames = fset_load("player_small.png", 8, 8);
+		fset_t *player_frames = fset_load("player_warrior.png", 8, 8);
 		
 		anim_create("player_idle_r", player_frames,  0, 6, 10);
 		anim_create("player_move_r", player_frames,  8, 8, 10);
