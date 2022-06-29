@@ -61,26 +61,6 @@ void game_update_map(game_t *game){
 	}else{
 		game->active_target = NULL;
 	}*/
-
-	/*for(item_node_t *iter = game->active_map->items->head; iter; iter = iter->next){
-		if(iter->data->flags & ITEM_ALIVE){
-			if(rect_overlap(iter->data->body->rect, player_rect)){
-				game->hud->counter->count += 1;
-				iter->data->flags &= !ITEM_ALIVE;
-			}
-		}
-	}*/
-	
-	/*for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
-		if(bullet_is_alive(iter->data)){
-			bullet_update(iter->data);
-			do_physics_to_it(
-				bullet_get_body(iter->data),
-				game->active_map->terrain_rects,
-				game->active_map->platform_rects
-			);
-		}
-	}*/
 }
 
 static void game_add_default_map(game_t *game){
@@ -111,20 +91,12 @@ game_t *game_create(core_t *core){
 	game_add_default_map(game);
 	game_select_map(game, "default");
 	player_move_to_coord(game->player, 128, 128);
-    // game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
-    // game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
-	
 
-	fset_t *item_frames = fset_load("item_sprites.png", 16, 16);
-	anim_create("bullet_default", item_frames,  16,  1,  1);
-	////////////////////
-	
-	// add_map("test_map", "map_test.png", "map_test_image.png")
 	map_t *test_map = map_dict_get(game->maps, "test_map");
 	map_init(test_map, "map_test.png", "map_test_image.png");
 	
-	target_t *spawn_target = target_dict_get(test_map->targets, "new_game_spawn");
-	target_set_rect_numbers(spawn_target, 200, 136, 64, 64);
+//	target_t *spawn_target = target_dict_get(test_map->targets, "new_game_spawn");
+//	target_set_rect_numbers(spawn_target, 200, 136, 64, 64);
 	
 	game_select_map(game, "test_map");
 	
@@ -178,17 +150,6 @@ void game_fast_frame(game_t *game){
 		/*if(controller_just_pressed(game->controller, BTN_A)){
 			if(game->active_target != NULL){
 				target_activate(game->active_target, game);
-			}
-		}*/
-		
-		/*if(controller_just_pressed(game->controller, BTN_B)){
-			bullet_t *new_bullet = bullet_list_get_dead(game->bullets);
-			bullet_init(new_bullet, 300, anim_get("bullet_default"));
-			bullet_move_to(new_bullet, player_get_rect(game->player));
-			if(player_get_facing(game->player) == DIR_R){
-				bullet_set_velocity(new_bullet,  4, 0);
-			}else{
-				bullet_set_velocity(new_bullet, -4, 0);
 			}
 		}*/
 		
