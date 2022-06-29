@@ -101,7 +101,6 @@ game_t *game_create(core_t *core){
 	game->debug_font = font_create("font_nokia.png");
 
 	game->menu = menu_create_main_menu(game);
-	game->hud = hud_create(game);
 	
 	camera_init(game->camera, 640, 360);
 
@@ -200,10 +199,6 @@ void game_fast_frame(game_t *game){
 	}
 }
 
-void game_draw_hud(game_t *game){
-	// counter_draw(game->hud->counter, game->core->screen); 
-}
-
 void game_full_frame(game_t *game){
 	SDL_Rect draw_rect;
 
@@ -215,8 +210,6 @@ void game_full_frame(game_t *game){
 
 	if(game->mode == GAME_MODE_MENU){
 		menu_draw(game->menu, game->core->screen);
-	}else{
-		game_draw_hud(game);
 	}
 
 	if(game->message_timeout > 0){

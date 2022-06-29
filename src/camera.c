@@ -31,6 +31,7 @@ void camera_init(camera_t *camera, int32_t w, int32_t h){
 void camera_delete(camera_t *camera){
 	rect_delete(camera->view);
 	SDL_FreeSurface(camera->buffer);
+	SDL_FreeSurface(camera->fade_buffer);
 
 	#ifdef DEBUG
 	SDL_FreeSurface(camera->debug_buffer);
