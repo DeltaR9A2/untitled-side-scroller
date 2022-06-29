@@ -62,14 +62,14 @@ void game_update_map(game_t *game){
 		game->active_target = NULL;
 	}*/
 
-	for(item_node_t *iter = game->active_map->items->head; iter; iter = iter->next){
+	/*for(item_node_t *iter = game->active_map->items->head; iter; iter = iter->next){
 		if(iter->data->flags & ITEM_ALIVE){
 			if(rect_overlap(iter->data->body->rect, player_rect)){
 				game->hud->counter->count += 1;
 				iter->data->flags &= !ITEM_ALIVE;
 			}
 		}
-	}
+	}*/
 	
 	/*for(bullet_node_t *iter = game->bullets->head; iter; iter = iter->next){
 		if(bullet_is_alive(iter->data)){
@@ -112,8 +112,8 @@ game_t *game_create(core_t *core){
 	game_add_default_map(game);
 	game_select_map(game, "default");
 	player_move_to_coord(game->player, 128, 128);
-//	game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
-//	game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
+    // game->player->body->rect->x = (128 - (game->player->body->rect->w/2));
+    // game->player->body->rect->y = (128 - (game->player->body->rect->h/2));
 	
 
 	fset_t *item_frames = fset_load("item_sprites.png", 16, 16);
@@ -150,7 +150,7 @@ void game_delete(game_t *game){
 
 void game_select_map(game_t *game, const char *map_name){
 	game->active_map = map_dict_get(game->maps, map_name);
-//	game->active_target = NULL;
+    // game->active_target = NULL;
 	
 	rect_match_to(game->camera->bounds, game->active_map->rect);
 }
@@ -201,7 +201,7 @@ void game_fast_frame(game_t *game){
 }
 
 void game_draw_hud(game_t *game){
-	counter_draw(game->hud->counter, game->core->screen); 
+	// counter_draw(game->hud->counter, game->core->screen); 
 }
 
 void game_full_frame(game_t *game){
