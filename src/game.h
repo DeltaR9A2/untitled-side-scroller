@@ -38,10 +38,9 @@ struct game_t{
 	camera_t *camera;	
 	player_t *player;
 
-	map_dict_t *maps;
+    map_dict_t *maps;
 
 	map_t *active_map;
-	//target_t *active_target;
 	
 	//////////////////////////////
 	char *message;

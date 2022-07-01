@@ -1,4 +1,5 @@
 #include "map.h"
+#include "sprite.h"
 
 map_t *map_create(void){
 	map_t *map = malloc(sizeof(map_t));
@@ -10,14 +11,10 @@ map_t *map_create(void){
 	map->terrain_rects = rect_list_create();
 	map->platform_rects = rect_list_create();
 	
-	map->targets = target_dict_create();
-	
 	return map;
 }
 
 void map_delete(map_t *map){
-	target_dict_delete(map->targets);
-
 	rect_list_delete(map->platform_rects);
 	rect_list_delete(map->terrain_rects);
 	
@@ -62,9 +59,5 @@ void map_init(map_t *map, const char *data_fn, const char *image_fn){
 }
 
 void map_update(map_t *map){
-	for(target_node_t *iter = map->targets->head; iter; iter = iter->next){
-		if (iter->data->sprite != NULL){
-			sprite_update(iter->data->sprite);
-		}
-	}
+    return;
 }

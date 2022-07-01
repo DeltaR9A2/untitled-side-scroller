@@ -39,28 +39,6 @@ void game_update_map(game_t *game){
 	if(game->active_map == NULL){ return; }
 	
 	map_update(game->active_map);
-
-//	target_t *nearest_target = NULL;
-//	int32_t nearest_distance = 9999;
-//	int32_t current_distance = 9999;
-
-	rect_t *player_rect = player_get_rect(game->player);
-
-	/*for(target_node_t *iter = game->active_map->targets->head; iter; iter = iter->next){
-		if(iter->data->sprite != NULL){
-			current_distance = (int32_t)rect_range_to(iter->data->rect, player_rect);
-			if(current_distance < nearest_distance){
-				nearest_distance = current_distance;
-				nearest_target = iter->data;
-			}
-		}
-	}*/
-
-	/*if(nearest_distance <= 32 && nearest_target != NULL){
-		game->active_target = nearest_target;
-	}else{
-		game->active_target = NULL;
-	}*/
 }
 
 static void game_add_default_map(game_t *game){
@@ -95,9 +73,6 @@ game_t *game_create(core_t *core){
 	map_t *test_map = map_dict_get(game->maps, "test_map");
 	map_init(test_map, "map_test.png", "map_test_image.png");
 	
-//	target_t *spawn_target = target_dict_get(test_map->targets, "new_game_spawn");
-//	target_set_rect_numbers(spawn_target, 200, 136, 64, 64);
-	
 	game_select_map(game, "test_map");
 	
 	sprite_anim_set(player_get_sprite(game->player), anim_get("player_idle_r"));
@@ -121,7 +96,6 @@ void game_delete(game_t *game){
 
 void game_select_map(game_t *game, const char *map_name){
 	game->active_map = map_dict_get(game->maps, map_name);
-    // game->active_target = NULL;
 	
 	rect_match_to(game->camera->bounds, game->active_map->rect);
 }
@@ -147,12 +121,6 @@ void game_fast_frame(game_t *game){
 		player_update(game->player, game);
 		game_update_map(game);
 
-		/*if(controller_just_pressed(game->controller, BTN_A)){
-			if(game->active_target != NULL){
-				target_activate(game->active_target, game);
-			}
-		}*/
-		
 		if(controller_just_pressed(game->controller, BTN_START)){
 			game->mode = GAME_MODE_MENU;
 			camera_set_fade(game->camera, 0x000000CC);

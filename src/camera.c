@@ -8,6 +8,7 @@ camera_t *camera_create(void){
 	camera->bounds = rect_create();
 	camera->buffer = NULL;
 	camera->fade_buffer = NULL;
+    
 	#ifdef DEBUG
 	camera->debug_buffer = NULL;
 	#endif
@@ -107,14 +108,16 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 	sprintf(buffer, "Time: %06.2fs", ((double)game->step)/200.0);
 	PRINT_DEBUG_LINE
 
-//	sprintf(buffer, "Player Pos: %4.0f,%4.0f", game->player->body->rect->x, game->player->body->rect->y);
-//	PRINT_DEBUG_LINE
+    rect_t *player_rect = player_get_rect(game->player);
 
-//	int npc_x = ((int)(game->player->body->rect->x/8.0)*8);
-//	int npc_y = ((int)((game->player->body->rect->y-26)/8.0)*8)+8;
+	sprintf(buffer, "Player Pos: %4.0f,%4.0f", player_rect->x, player_rect->y);
+	PRINT_DEBUG_LINE
 
-//	sprintf(buffer, "NPC Pos: %i,%i", npc_x, npc_y);
-//	PRINT_DEBUG_LINE
+	int npc_x = ((int)(player_rect->x/8.0)*8);
+	int npc_y = ((int)((player_rect->y-26)/8.0)*8)+8;
+
+	sprintf(buffer, "NPC Pos: %i,%i", npc_x, npc_y);
+	PRINT_DEBUG_LINE
 
 	#undef PRINT_DEBUG_LINE
 }
@@ -137,20 +140,6 @@ void camera_draw_surface(camera_t *camera, SDL_Surface *surface){
 
 void camera_draw_player(camera_t *camera, player_t *player){
 	camera_draw_sprite(camera, player_get_sprite(player));
-}
-
-void camera_draw_targets(camera_t *camera, game_t *game)
-{
-	target_node_t *iter = game->active_map->targets->head;
-	while(iter != NULL)
-	{
-
-		if(iter->data->sprite != NULL){
-			camera_draw_sprite(camera, iter->data->sprite);
-		}
-		
-		iter = iter->next;
-	}
 }
 
 void camera_draw_game(camera_t *camera, game_t *game){
