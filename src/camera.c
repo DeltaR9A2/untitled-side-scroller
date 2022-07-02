@@ -69,7 +69,7 @@ void camera_debug_rect(camera_t *camera, rect_t *rect, int32_t color){
 void camera_draw_terrain_rects(camera_t *camera, game_t *game){
 	rect_node_t *iter = game->active_map->terrain_rects->head;
 	while(iter != NULL){
-		camera_debug_rect(camera, iter->data, 0x33336644);
+		camera_debug_rect(camera, iter->data, 0x33336611);
 		iter = iter->next;
 	}
 }
@@ -77,7 +77,7 @@ void camera_draw_terrain_rects(camera_t *camera, game_t *game){
 void camera_draw_platform_rects(camera_t *camera, game_t *game){
 	rect_node_t *iter = game->active_map->platform_rects->head;
 	while(iter != NULL){
-		camera_debug_rect(camera, iter->data, 0x7777AA44);
+		camera_debug_rect(camera, iter->data, 0x7777AA11);
 		iter = iter->next;
 	}
 }
@@ -93,7 +93,7 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 	fill_rect.x = 0;
 	fill_rect.y = 0;
 	fill_rect.w = 150;
-	fill_rect.h = (5*line_h)+6;
+	fill_rect.h = (4*line_h)+6;
 
 	SDL_FillRect(camera->debug_buffer, &fill_rect, 0x000000AA);
 	
@@ -111,12 +111,6 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
     rect_t *player_rect = player_get_rect(game->player);
 
 	sprintf(buffer, "Player Pos: %4.0f,%4.0f", player_rect->x, player_rect->y);
-	PRINT_DEBUG_LINE
-
-	int npc_x = ((int)(player_rect->x/8.0)*8);
-	int npc_y = ((int)((player_rect->y-26)/8.0)*8)+8;
-
-	sprintf(buffer, "NPC Pos: %i,%i", npc_x, npc_y);
 	PRINT_DEBUG_LINE
 
 	#undef PRINT_DEBUG_LINE
@@ -140,6 +134,10 @@ void camera_draw_surface(camera_t *camera, SDL_Surface *surface){
 
 void camera_draw_player(camera_t *camera, player_t *player){
 	camera_draw_sprite(camera, player_get_sprite(player));
+
+    #ifdef DEBUG
+    camera_debug_rect(camera, player_get_rect(player), 0xFFAA3333);
+    #endif
 }
 
 void camera_draw_game(camera_t *camera, game_t *game){
@@ -160,16 +158,14 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	#endif
 	
 	camera_draw_surface(camera, game->active_map->image);
-
 	camera_draw_player(camera, game->player);
 
 	#ifdef DEBUG
 	camera_draw_debug_info(camera, game);
-	
 	SDL_BlitSurface(camera->debug_buffer, NULL, camera->buffer, NULL);
 	#endif
 
-  SDL_BlitSurface(camera->fade_buffer, NULL, camera->buffer, NULL);
+    SDL_BlitSurface(camera->fade_buffer, NULL, camera->buffer, NULL);
 }
 
 
