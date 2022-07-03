@@ -7,7 +7,6 @@ typedef struct camera_t camera_t;
 #include "game.h"
 #include "player.h"
 
-
 camera_t *camera_create(void);
 void camera_init(camera_t *camera, int32_t w, int32_t h);
 void camera_delete(camera_t *camera);

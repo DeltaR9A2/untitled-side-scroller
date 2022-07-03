@@ -9,6 +9,14 @@ typedef struct player_t player_t;
 #include "game.h"
 #include "sprite.h"
 
+extern const uint32_t BLOCKED_L;
+extern const uint32_t BLOCKED_R;
+extern const uint32_t BLOCKED_U;
+extern const uint32_t BLOCKED_D;
+extern const uint32_t BLOCKED_MASK;
+
+extern const uint32_t PLAT_DROP;
+
 extern const uint32_t DIR_X;
 extern const uint32_t DIR_R;
 extern const uint32_t DIR_L;
