@@ -1,8 +1,7 @@
-#include "map.h"
-#include "sprite.h"
-#include "stb_ds.h"
 #include <stdio.h>
 
+#include "map.h"
+#include "sprite.h"
 #include "stb_ds.h"
 
 const uint32_t BLOCKED_L = 0x00000001;
@@ -12,6 +11,29 @@ const uint32_t BLOCKED_D = 0x00000008;
 const uint32_t BLOCKED_MASK = 0x0000000F;
 
 const uint32_t PLAT_DROP = 0x00000010;
+
+
+struct body_t{
+	rect_t *rect;
+	double vx, vy;
+	uint32_t flags;
+};
+
+typedef struct cmap_t cmap_t;
+
+struct cmap_t{
+	rect_t *rect;
+	int8_t *data;
+};
+
+struct map_t{
+	rect_t rect;
+
+	SDL_Surface *image;
+	
+	rect_t *terrain_rects;
+	rect_t *platform_rects;
+};
 
 body_t *body_create(void){
 	body_t *body = malloc(sizeof(body_t));
@@ -39,12 +61,37 @@ void body_move_to(body_t *body, rect_t *rect){
 	rect_move_to(body->rect, rect);
 }
 
+void body_set_pos(body_t *body, double x, double y){
+    body->rect->x = x;
+    body->rect->y = y;
+}
+
 void body_set_velocity(body_t *body, double vx, double vy){
 	body->vx = vx;
 	body->vy = vy;
 }
 
-void do_physics_to_it(body_t *body, rect_t *terr_rects, rect_t *plat_rects){
+void body_get_velocity(body_t *body, double *vx, double *vy){
+        *vx = body->vx;
+        *vy = body->vy;
+}
+
+void body_set_flags(body_t *body, uint32_t flags){
+    body->flags |= flags;
+}
+
+void body_unset_flags(body_t *body, uint32_t flags){
+    body->flags &= ~flags;
+}
+
+bool body_check_flags(body_t *body, uint32_t flags){
+    return (body->flags & flags) == flags;
+}
+
+void do_physics_to_it(body_t *body, map_t *map){
+    rect_t *terr_rects = map->terrain_rects;
+    rect_t *plat_rects = map->platform_rects;
+    
 	rect_t start = (rect_t){0,0,0,0};
 	rect_match_to(&start, body->rect);
 	
@@ -99,6 +146,9 @@ void do_physics_to_it(body_t *body, rect_t *terr_rects, rect_t *plat_rects){
 		}
 	}
 }
+
+
+
 const static int32_t GRID_SIZE = 8;
 
 cmap_t *cmap_create(void){
@@ -220,8 +270,6 @@ void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects){
 	CMAP_ITERATION_STOP;
 }
 
-
-
 static struct { char *key; map_t *value; } *map_index = NULL;
 
 map_t *map_create(void){
@@ -297,4 +345,19 @@ map_t *map_load(const char *map_name){
     }
 
     return this_map;
+}
+
+SDL_Surface *map_get_image(map_t *map){
+    return map->image;
+}
+
+rect_t *map_get_rect(map_t *map){
+    return &map->rect;
+}
+rect_t *map_get_terrain_rects(map_t *map){
+    return map->terrain_rects;
+}
+
+rect_t *map_get_platform_rects(map_t *map){
+    return map->platform_rects;
 }

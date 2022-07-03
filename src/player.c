@@ -65,11 +65,9 @@ player_t *player_create(void){
 	player->sprite = sprite_create();
 
 	player->flashing = 0;
-   
-	player->body->rect->x = 0;
-	player->body->rect->y = 0;
-	player->body->rect->w = 20;
-	player->body->rect->h = 30;
+    
+    body_set_pos(player->body, 0, 0);
+	body_set_size(player->body, 20, 30);
 	
 	player->fall_speed = 6.00;
 	player->fall_accel = 0.12;
@@ -109,62 +107,69 @@ void player_delete(player_t *player){
 }
 
 void player_update_controls(player_t *player, controller_t *controller){
-	player->body->flags &= ~PLAT_DROP;
+	body_unset_flags(player->body, PLAT_DROP);
 
-	if(player->body->vy < player->fall_speed){
-		player->body->vy = fmin(player->fall_speed, player->body->vy + player->fall_accel);
+    double vx, vy;
+    body_get_velocity(player->body, &vx, &vy);
+
+	if(vy < player->fall_speed){
+		vy = fmin(player->fall_speed, vy + player->fall_accel);
 	}
 
 	if(controller_pressed(controller, BTN_D)){
-		player->body->flags |= PLAT_DROP;
+		body_set_flags(player->body, PLAT_DROP);
 	}
 	
 	if(controller_just_pressed(controller, BTN_U)){
-		if(player->body->flags & BLOCKED_D && controller_released(controller, BTN_D)){
-			player->body->vy = player->jump_force;
+		if(body_check_flags(player->body, BLOCKED_D) && controller_released(controller, BTN_D)){
+			vy = player->jump_force;
 		}
 	}else if(controller_just_released(controller, BTN_U)){
-		if(player->body->vy < player->jump_brake){
-			player->body->vy = player->jump_brake;
+		if(vy < player->jump_brake){
+			vy = player->jump_brake;
 		}
 	}
 	
 	if(controller_pressed(controller, BTN_R)){
 		player->face_dir = DIR_R;
 		player->ctrl_dir = DIR_R;
-		if(player->body->vx < 0){
-			player->body->vx += player->ground_decel;
-		}else if(player->body->vx < player->ground_speed){
-			player->body->vx = fmin(player->ground_speed, player->body->vx + player->ground_accel);
+		if(vx < 0){
+			vx += player->ground_decel;
+		}else if(vx < player->ground_speed){
+			vx = fmin(player->ground_speed, vx + player->ground_accel);
 		}
 	}else if(controller_pressed(controller, BTN_L)){
 		player->face_dir = DIR_L;
 		player->ctrl_dir = DIR_L;
-		if(player->body->vx > 0){
-			player->body->vx -= player->ground_decel;
-		}else if(player->body->vx > -player->ground_speed){
-			player->body->vx = fmax(-player->ground_speed, player->body->vx - player->ground_accel);
+		if(vx > 0){
+			vx -= player->ground_decel;
+		}else if(vx > -player->ground_speed){
+			vx = fmax(-player->ground_speed, vx - player->ground_accel);
 		}
 	}else{
 		player->ctrl_dir = DIR_X;
-		if(player->body->vx > 0.0){
-			player->body->vx = fmax(0.0, player->body->vx - player->ground_decel);
-		}else if(player->body->vx < 0.0){
-			player->body->vx = fmin(0.0, player->body->vx + player->ground_decel);
+		if(vx > 0.0){
+			vx = fmax(0.0, vx - player->ground_decel);
+		}else if(vx < 0.0){
+			vx = fmin(0.0, vx + player->ground_decel);
 		}
 	}
 	
-	if(player->body->vx > 0 && !(player->body->flags & BLOCKED_R)){
+	if(vx > 0 && !(body_check_flags(player->body, BLOCKED_R))){
 		player->move_dir = DIR_R;
-	}else if(player->body->vx < 0 && !(player->body->flags & BLOCKED_L)){
+	}else if(vx < 0 && !(body_check_flags(player->body, BLOCKED_L))){
 		player->move_dir = DIR_L;
 	}else{
 		player->move_dir = DIR_X;
 	}
+    body_set_velocity(player->body, vx, vy);
 }
 
 void player_select_animation(player_t *player){
-	if(player->body->flags & BLOCKED_D){
+    double vx, vy;
+    body_get_velocity(player->body, &vx, &vy);
+
+	if(body_check_flags(player->body, BLOCKED_D)){
 		if(player->move_dir == DIR_X){
 			if(player->face_dir == DIR_R){
 				sprite_anim_set(player->sprite, player->idle_r);
@@ -186,23 +191,24 @@ void player_select_animation(player_t *player){
 		}
 	}else{
 		if(player->face_dir == DIR_R){
-			if(player->body->vy < -1.0){
+			if(vy < -1.0){
 				sprite_anim_set(player->sprite, player->jump_r);
-			}else if(player->body->vy > 1.0){
+			}else if(vy > 1.0){
 				sprite_anim_set(player->sprite, player->fall_r);
 			}else{
 				sprite_anim_set(player->sprite, player->hang_r);
 			}
 		}else if(player->face_dir == DIR_L){
-			if(player->body->vy < -1.0){
+			if(vy < -1.0){
 				sprite_anim_set(player->sprite, player->jump_l);
-			}else if(player->body->vy > 1.0){
+			}else if(vy > 1.0){
 				sprite_anim_set(player->sprite, player->fall_l);
 			}else{
 				sprite_anim_set(player->sprite, player->hang_l);
 			}
 		}
 	}
+    
 }
 
 void player_update(player_t *player, game_t *game){
@@ -211,9 +217,9 @@ void player_update(player_t *player, game_t *game){
 	}
 	
 	player_update_controls(player, game->controller);
-	do_physics_to_it(player->body, game->active_map->terrain_rects, game->active_map->platform_rects);
+	do_physics_to_it(player->body, game->active_map);
 	player_select_animation(player);
-    sprite_move_to(player->sprite, player->body->rect);
+    sprite_move_to(player->sprite, body_get_rect(player->body));
 	sprite_anim_update(player->sprite);
 }
 
@@ -222,7 +228,7 @@ sprite_t *player_get_sprite(player_t *player){
 }
 
 rect_t *player_get_rect(player_t *player){
-	return player->body->rect;
+	return body_get_rect(player->body);
 }
 
 uint32_t player_get_facing(player_t *player){
@@ -230,7 +236,7 @@ uint32_t player_get_facing(player_t *player){
 }
 
 void player_move_to_rect(player_t *player, rect_t *rect){
-	rect_move_to(player->body->rect, rect);
+	rect_move_to(body_get_rect(player->body), rect);
 }
 
 player_t *player_get_only(void){

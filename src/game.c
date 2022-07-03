@@ -39,7 +39,7 @@ void game_set_message(game_t *game, const char *text){
 
 void game_select_map(game_t *game, const char *map_name){
 	game->active_map = map_load(map_name);
-	rect_match_to(game->camera->bounds, &game->active_map->rect);
+	rect_match_to(game->camera->bounds, map_get_rect(game->active_map));
 }
 
 game_t *game_create(void){
