@@ -48,21 +48,16 @@ extern const uint32_t BTN_START;
 extern const uint32_t BTN_NONE;
 
 typedef struct controller_t controller_t;
-struct controller_t{
-	uint32_t pressed;
-	uint32_t previous;
-};
 
-controller_t *controller_create(void);
-void controller_delete(controller_t *controller);
+void controller_init(void);
 
-void controller_reset(controller_t *c);
-void controller_poll_events(controller_t *c);
+void controller_reset(void);
+void controller_poll_events(void);
 
-bool controller_pressed(controller_t *c, uint32_t buttons);
-bool controller_released(controller_t *c, uint32_t buttons);
+bool controller_pressed(uint32_t buttons);
+bool controller_released(uint32_t buttons);
 
-bool controller_just_pressed(controller_t *c, uint32_t buttons);
-bool controller_just_released(controller_t *c, uint32_t buttons);
+bool controller_just_pressed(uint32_t buttons);
+bool controller_just_released(uint32_t buttons);
 
 #endif

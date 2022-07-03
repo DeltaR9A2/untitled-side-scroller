@@ -11,12 +11,6 @@
 
 typedef struct font_t font_t;
 
-struct font_t{
-	SDL_Surface *glyphs[MAX_GLYPHS];
-	uint32_t head_kerns[MAX_GLYPHS];
-	uint32_t tail_kerns[MAX_GLYPHS];
-};
-
 font_t *font_create(const char *image_fn);
 void font_delete(font_t *font);
 

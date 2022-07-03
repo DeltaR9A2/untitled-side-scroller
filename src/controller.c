@@ -46,163 +46,162 @@ const uint32_t BTN_START = 0x00008000;
 
 const uint32_t BTN_NONE = 0x00000000;
 
-controller_t *controller_create(void){
-	controller_t *controller = malloc(sizeof(controller_t));
+struct controller_t{
+	uint32_t pressed;
+	uint32_t previous;
+};
 
-	controller->pressed = BTN_NONE;
-	controller->previous = BTN_NONE;
+static controller_t CN;
+
+void controller_init(void){
+	CN.pressed = BTN_NONE;
+	CN.previous = BTN_NONE;
 	
 	SDL_JoystickOpen(0);
-	
-	return controller;
 }
 
-void controller_delete(controller_t *controller){
-	free(controller);
+bool controller_pressed(uint32_t buttons){
+	return ((CN.pressed & buttons) == buttons);
 }
 
-bool controller_pressed(controller_t *c, uint32_t buttons){
-	return ((c->pressed & buttons) == buttons);
+bool controller_released(uint32_t buttons){
+	return !((CN.pressed & buttons) == buttons);
 }
 
-bool controller_released(controller_t *c, uint32_t buttons){
-	return !((c->pressed & buttons) == buttons);
+bool controller_just_pressed(uint32_t buttons){
+	return ((CN.pressed & buttons) == buttons) && !((CN.previous & buttons) == buttons);
 }
 
-bool controller_just_pressed(controller_t *c, uint32_t buttons){
-	return ((c->pressed & buttons) == buttons) && !((c->previous & buttons) == buttons);
+bool controller_just_released(uint32_t buttons){
+	return !((CN.pressed & buttons) == buttons) && ((CN.previous & buttons) == buttons);
 }
 
-bool controller_just_released(controller_t *c, uint32_t buttons){
-	return !((c->pressed & buttons) == buttons) && ((c->previous & buttons) == buttons);
+void controller_reset(void){
+	CN.pressed = BTN_NONE;
+	CN.previous = BTN_NONE;
 }
 
-void controller_reset(controller_t *c){
-	c->pressed = BTN_NONE;
-	c->previous = BTN_NONE;
-}
-
-void controller_poll_events(controller_t *c){
+void controller_poll_events(void){
 	SDL_Event e;
 
-	c->previous = c->pressed;
+	CN.previous = CN.pressed;
 	while(SDL_PollEvent(&e)){
 		if(e.type == SDL_KEYDOWN){
 			uint32_t key = e.key.keysym.scancode;
 			if(key == KEYMAP_U){
-				c->pressed |= BTN_U;
+				CN.pressed |= BTN_U;
 			}else if(key == KEYMAP_D){
-				c->pressed |= BTN_D;
+				CN.pressed |= BTN_D;
 			}else if(key == KEYMAP_L){
-				c->pressed |= BTN_L;
+				CN.pressed |= BTN_L;
 			}else if(key == KEYMAP_R){
-				c->pressed |= BTN_R;
+				CN.pressed |= BTN_R;
 			}else if(key == KEYMAP_A){
-				c->pressed |= BTN_A;
+				CN.pressed |= BTN_A;
 			}else if(key == KEYMAP_B){
-				c->pressed |= BTN_B;
+				CN.pressed |= BTN_B;
 			}else if(key == KEYMAP_X){
-				c->pressed |= BTN_X;
+				CN.pressed |= BTN_X;
 			}else if(key == KEYMAP_Y){
-				c->pressed |= BTN_Y;
+				CN.pressed |= BTN_Y;
 			}else if(key == KEYMAP_LB){
-				c->pressed |= BTN_LB;
+				CN.pressed |= BTN_LB;
 			}else if(key == KEYMAP_RB){
-				c->pressed |= BTN_RB;
+				CN.pressed |= BTN_RB;
 			}else if(key == KEYMAP_LT){
-				c->pressed |= BTN_LT;
+				CN.pressed |= BTN_LT;
 			}else if(key == KEYMAP_RT){
-				c->pressed |= BTN_RT;
+				CN.pressed |= BTN_RT;
 			}else if(key == KEYMAP_START){
-				c->pressed |= BTN_START;
+				CN.pressed |= BTN_START;
 			}else if(key == KEYMAP_BACK){
-				c->pressed |= BTN_BACK;
+				CN.pressed |= BTN_BACK;
 			}
 		}else if(e.type == SDL_KEYUP){
 			uint32_t key = e.key.keysym.scancode;
 			if(key == KEYMAP_U){
-				c->pressed &= ~BTN_U;
+				CN.pressed &= ~BTN_U;
 			}else if(key == KEYMAP_D){
-				c->pressed &= ~BTN_D;
+				CN.pressed &= ~BTN_D;
 			}else if(key == KEYMAP_L){
-				c->pressed &= ~BTN_L;
+				CN.pressed &= ~BTN_L;
 			}else if(key == KEYMAP_R){
-				c->pressed &= ~BTN_R;
+				CN.pressed &= ~BTN_R;
 			}else if(key == KEYMAP_A){
-				c->pressed &= ~BTN_A;
+				CN.pressed &= ~BTN_A;
 			}else if(key == KEYMAP_B){
-				c->pressed &= ~BTN_B;
+				CN.pressed &= ~BTN_B;
 			}else if(key == KEYMAP_X){
-				c->pressed &= ~BTN_X;
+				CN.pressed &= ~BTN_X;
 			}else if(key == KEYMAP_Y){
-				c->pressed &= ~BTN_Y;
+				CN.pressed &= ~BTN_Y;
 			}else if(key == KEYMAP_LB){
-				c->pressed &= ~BTN_LB;
+				CN.pressed &= ~BTN_LB;
 			}else if(key == KEYMAP_RB){
-				c->pressed &= ~BTN_RB;
+				CN.pressed &= ~BTN_RB;
 			}else if(key == KEYMAP_LT){
-				c->pressed &= ~BTN_LT;
+				CN.pressed &= ~BTN_LT;
 			}else if(key == KEYMAP_RT){
-				c->pressed &= ~BTN_RT;
+				CN.pressed &= ~BTN_RT;
 			}else if(key == KEYMAP_START){
-				c->pressed &= ~BTN_START;
+				CN.pressed &= ~BTN_START;
 			}else if(key == KEYMAP_BACK){
-				c->pressed &= ~BTN_BACK;
+				CN.pressed &= ~BTN_BACK;
 			}
 		}else if(e.type == SDL_JOYHATMOTION){
-			c->pressed &= ~BTN_DIR_ANY;
+			CN.pressed &= ~BTN_DIR_ANY;
 			if(e.jhat.value == SDL_HAT_UP){
-				c->pressed |= BTN_U;
+				CN.pressed |= BTN_U;
 			}else if(e.jhat.value == SDL_HAT_LEFT){
-				c->pressed |= BTN_L;
+				CN.pressed |= BTN_L;
 			}else if(e.jhat.value == SDL_HAT_RIGHT){
-				c->pressed |= BTN_R;
+				CN.pressed |= BTN_R;
 			}else if(e.jhat.value == SDL_HAT_DOWN){
-				c->pressed |= BTN_D;
+				CN.pressed |= BTN_D;
 			}else if(e.jhat.value == SDL_HAT_LEFTUP){
-				c->pressed |= BTN_L | BTN_U;
+				CN.pressed |= BTN_L | BTN_U;
 			}else if(e.jhat.value == SDL_HAT_RIGHTUP){
-				c->pressed |= BTN_R | BTN_U;
+				CN.pressed |= BTN_R | BTN_U;
 			}else if(e.jhat.value == SDL_HAT_LEFTDOWN){
-				c->pressed |= BTN_L | BTN_D;
+				CN.pressed |= BTN_L | BTN_D;
 			}else if(e.jhat.value == SDL_HAT_RIGHTDOWN){
-				c->pressed |= BTN_R | BTN_D;
+				CN.pressed |= BTN_R | BTN_D;
 			}
 		}else if(e.type == SDL_JOYBUTTONDOWN){
 			if(e.jbutton.button == 0){
-				c->pressed |= BTN_A;
+				CN.pressed |= BTN_A;
 			}else if(e.jbutton.button == 1){
-				c->pressed |= BTN_B;
+				CN.pressed |= BTN_B;
 			}else if(e.jbutton.button == 2){
-				c->pressed |= BTN_X;
+				CN.pressed |= BTN_X;
 			}else if(e.jbutton.button == 3){
-				c->pressed |= BTN_Y;
+				CN.pressed |= BTN_Y;
 			}else if(e.jbutton.button == 4){
-				c->pressed |= BTN_LB;
+				CN.pressed |= BTN_LB;
 			}else if(e.jbutton.button == 5){
-				c->pressed |= BTN_RB;
+				CN.pressed |= BTN_RB;
 			}else if(e.jbutton.button == 6){
-				c->pressed |= BTN_BACK;
+				CN.pressed |= BTN_BACK;
 			}else if(e.jbutton.button == 7){
-				c->pressed |= BTN_START;
+				CN.pressed |= BTN_START;
 			}
 		}else if(e.type == SDL_JOYBUTTONUP){
 			if(e.jbutton.button == 0){
-				c->pressed &= ~BTN_A;
+				CN.pressed &= ~BTN_A;
 			}else if(e.jbutton.button == 1){
-				c->pressed &= ~BTN_B;
+				CN.pressed &= ~BTN_B;
 			}else if(e.jbutton.button == 2){
-				c->pressed &= ~BTN_X;
+				CN.pressed &= ~BTN_X;
 			}else if(e.jbutton.button == 3){
-				c->pressed &= ~BTN_Y;
+				CN.pressed &= ~BTN_Y;
 			}else if(e.jbutton.button == 4){
-				c->pressed &= ~BTN_LB;
+				CN.pressed &= ~BTN_LB;
 			}else if(e.jbutton.button == 5){
-				c->pressed &= ~BTN_RB;
+				CN.pressed &= ~BTN_RB;
 			}else if(e.jbutton.button == 6){
-				c->pressed &= ~BTN_BACK;
+				CN.pressed &= ~BTN_BACK;
 			}else if(e.jbutton.button == 7){
-				c->pressed &= ~BTN_START;
+				CN.pressed &= ~BTN_START;
 			}
 		}
 	}

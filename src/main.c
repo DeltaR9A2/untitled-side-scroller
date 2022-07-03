@@ -35,6 +35,8 @@ int main(void){
 	core_t *core = core_get_only();
 	game_t *game = game_get_only();
 
+    controller_init();
+
 	SDL_AddEventWatch(&main_event_watch, game);
 	
 	double ms_per_frame = 10.0;
@@ -52,7 +54,7 @@ int main(void){
 		if(ms_accum > ms_per_frame){
 			ms_accum -= ms_per_frame;
 
-			controller_poll_events(game->controller);
+			controller_poll_events();
 			
 			if(ms_accum > ms_per_frame){
 				game_fast_frame(game);

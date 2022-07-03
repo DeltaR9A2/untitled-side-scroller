@@ -3,6 +3,22 @@
 
 #include "menu.h"
 
+struct option_t{
+	char *label;
+	void (*action)(menu_t*);
+};
+
+struct menu_t{
+	game_t *game;
+	font_t *font;
+	option_t **options;
+	SDL_Surface *buffer;
+	uint8_t num_options;
+	uint8_t selection;
+	
+	uint32_t x_pos, y_pos;
+};
+
 const uint32_t OPTION_LABEL_LEN = 32;
 const uint32_t MENU_MAX_OPTIONS = 8;
 

@@ -20,7 +20,6 @@ const uint32_t PLAT_DROP = 0x00000010;
 struct player_t{
 	sprite_t *sprite;
 
-    //body_t *body;
     rect_t *rect;
     double vx, vy;
     uint32_t flags;
@@ -129,21 +128,21 @@ void player_update_controls(player_t *player, controller_t *controller){
 		player->vy = fmin(player->fall_speed, player->vy + player->fall_accel);
 	}
 
-	if(controller_pressed(controller, BTN_D)){
+	if(controller_pressed(BTN_D)){
 		player->flags |= PLAT_DROP;
 	}
 	
-	if(controller_just_pressed(controller, BTN_U)){
-		if(player->flags & BLOCKED_D && controller_released(controller, BTN_D)){
+	if(controller_just_pressed(BTN_U)){
+		if(player->flags & BLOCKED_D && controller_released(BTN_D)){
 			player->vy = player->jump_force;
 		}
-	}else if(controller_just_released(controller, BTN_U)){
+	}else if(controller_just_released(BTN_U)){
 		if(player->vy < player->jump_brake){
 			player->vy = player->jump_brake;
 		}
 	}
 	
-	if(controller_pressed(controller, BTN_R)){
+	if(controller_pressed(BTN_R)){
 		player->face_dir = DIR_R;
 		player->ctrl_dir = DIR_R;
 		if(player->vx < 0){
@@ -151,7 +150,7 @@ void player_update_controls(player_t *player, controller_t *controller){
 		}else if(player->vx < player->ground_speed){
 			player->vx = fmin(player->ground_speed, player->vx + player->ground_accel);
 		}
-	}else if(controller_pressed(controller, BTN_L)){
+	}else if(controller_pressed(BTN_L)){
 		player->face_dir = DIR_L;
 		player->ctrl_dir = DIR_L;
 		if(player->vx > 0){
@@ -311,7 +310,8 @@ void player_move_and_collide_with_map(player_t *player, map_t *map){
 void player_update(player_t *player, game_t *game){
 	player_update_controls(player, game->controller);
     player_move_and_collide_with_map(player, game->active_map);
-    sprite_move_to(player->sprite, player->rect);
 	player_select_animation(player);
+
+    sprite_move_to(player->sprite, player->rect);
 	sprite_anim_update(player->sprite);
 }

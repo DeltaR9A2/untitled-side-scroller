@@ -89,23 +89,23 @@ void game_fast_frame(game_t *game){
 	game->step += 1;
 
 	if(game->mode == GAME_MODE_MENU){
-		if(controller_just_pressed(game->controller, BTN_U)){
+		if(controller_just_pressed(BTN_U)){
 			menu_up(game->menu);
 		}
-		if(controller_just_pressed(game->controller, BTN_D)){
+		if(controller_just_pressed(BTN_D)){
 			menu_down(game->menu);
 		}
-		if(controller_just_pressed(game->controller, BTN_A)){
+		if(controller_just_pressed(BTN_A)){
 			menu_activate(game->menu);
 		}
-		if(controller_just_pressed(game->controller, BTN_START)){
+		if(controller_just_pressed(BTN_START)){
 			menu_activate(game->menu);
 		}
 
 	}else if(game->mode == GAME_MODE_PLAY){
 		player_update(game->player, game);
 
-		if(controller_just_pressed(game->controller, BTN_START)){
+		if(controller_just_pressed(BTN_START)){
 			game->mode = GAME_MODE_MENU;
 			camera_set_fade(game->camera, 0x000000CC);
 		}
@@ -136,13 +136,11 @@ void game_full_frame(game_t *game){
 }
 
 void game_create_data_structures(game_t *game){
-	game->controller = controller_create();
 	game->camera = camera_create();
 }
 
 void game_delete_data_structures(game_t *game){
 	camera_delete(game->camera);
-	controller_delete(game->controller);
 }
 
 game_t *game_get_only(void){

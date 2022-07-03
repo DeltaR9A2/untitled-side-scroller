@@ -9,6 +9,12 @@ const char *glyph_order = " 1234567890-=`!@#$%^&*()_+~abcdefghijklmnopqrstuvwxyz
 
 //const char *glyph_order = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456780";
 
+struct font_t{
+	SDL_Surface *glyphs[MAX_GLYPHS];
+	uint32_t head_kerns[MAX_GLYPHS];
+	uint32_t tail_kerns[MAX_GLYPHS];
+};
+
 font_t *font_create(const char *image_fn){
 	font_t *font = malloc(sizeof(font_t));
 	memset(font, 0, sizeof(font_t));
