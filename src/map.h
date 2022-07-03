@@ -3,7 +3,6 @@
 
 typedef struct map_t map_t;
 
-#include "rect_list.h"
 #include "cmap.h"
 
 struct map_t{

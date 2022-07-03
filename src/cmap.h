@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 #include "rect.h"
-#include "rect_list.h"
 
 typedef struct cmap_t cmap_t;
 struct cmap_t{

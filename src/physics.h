@@ -2,7 +2,6 @@
 #define physics_h
 
 #include "rect.h"
-#include "rect_list.h"
 
 extern const uint32_t BLOCKED_L;
 extern const uint32_t BLOCKED_R;
