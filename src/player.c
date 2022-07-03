@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "player.h"
-#include "physics.h"
+#include "map.h"
 
 const uint32_t DIR_X = 0;
 const uint32_t DIR_R = 1;
