@@ -39,7 +39,7 @@ void game_set_message(game_t *game, const char *text){
 
 void game_select_map(game_t *game, const char *map_name){
 	game->active_map = map_load(map_name);
-	rect_match_to(game->camera->bounds, map_get_rect(game->active_map));
+	camera_limit_to(game->camera, map_get_rect(game->active_map));
 }
 
 game_t *game_create(void){
@@ -117,9 +117,9 @@ void game_full_frame(game_t *game){
 
 	game_fast_frame(game);
 
-	rect_move_to(game->camera->view, player_get_rect(game->player));
+	camera_look_at(game->camera, player_get_rect(game->player));
 	camera_draw_game(game->camera, game);
-	SDL_BlitSurface(game->camera->buffer, NULL, core_get_screen_surface(game->core), NULL);
+	SDL_BlitSurface(camera_get_surface(game->camera), NULL, core_get_screen_surface(game->core), NULL);
 
 	if(game->mode == GAME_MODE_MENU){
 		menu_draw(game->menu, core_get_screen_surface(game->core));

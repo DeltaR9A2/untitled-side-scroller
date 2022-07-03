@@ -4,6 +4,28 @@
 #include "core.h"
 #include "stb_ds.h"
 
+struct camera_t{
+	rect_t *view;
+	rect_t *bounds;
+	SDL_Surface *buffer;
+	SDL_Surface *fade_buffer;
+
+	#ifdef DEBUG
+	SDL_Surface *debug_buffer;
+	#endif
+};
+void camera_look_at(camera_t *camera, rect_t *rect){
+    rect_move_to(camera->view, rect);
+}
+
+void camera_limit_to(camera_t *camera, rect_t *rect){
+    rect_match_to(camera->bounds, rect);
+}
+
+SDL_Surface *camera_get_surface(camera_t *camera){
+    return camera->buffer;
+}
+
 camera_t *camera_create(void){
 	camera_t *camera = malloc(sizeof(camera_t));
 	camera->view = rect_create();
