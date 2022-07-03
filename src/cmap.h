@@ -25,6 +25,6 @@ bool cmap_xy_is_valid(cmap_t *cmap, int32_t x, int32_t y);
 void cmap_rect_mark(cmap_t *cmap, rect_t *rect);
 bool cmap_rect_check(cmap_t *cmap, rect_t *rect);
 
-void cmap_add_to_rect_list(cmap_t *cmap, rect_list_t *rects);
+void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects);
 
 #endif

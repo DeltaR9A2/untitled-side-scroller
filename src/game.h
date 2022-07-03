@@ -17,9 +17,6 @@ extern const uint32_t GAME_MESSAGE_LEN;
 #include "camera.h"
 #include "player.h"
 #include "controller.h"
-
-#include "map_dict.h"
-
 #include "map.h"
 #include "target.h"
 
@@ -38,8 +35,6 @@ struct game_t{
 	camera_t *camera;	
 	player_t *player;
 
-    map_dict_t *maps;
-
 	map_t *active_map;
 	
 	//////////////////////////////
@@ -49,13 +44,11 @@ struct game_t{
 	//////////////////////////////
 };
 
-game_t *game_create(core_t *core);
-void game_delete(game_t *game);
+game_t *game_get_only(void);
+void game_cleanup(void);
 
 void game_fast_frame(game_t *game);
 void game_full_frame(game_t *game);
-
-void game_select_map(game_t *game, const char *map_name);
 
 void game_set_message(game_t *game, const char *text);
 

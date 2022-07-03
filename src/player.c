@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "player.h"
+#include "physics.h"
 
 const uint32_t DIR_X = 0;
 const uint32_t DIR_R = 1;
@@ -11,7 +12,6 @@ struct player_t{
 	sprite_t *sprite;
 	uint32_t flashing;
 
-	///// Physics Vars
 	double fall_speed;
 	double fall_accel;
 	
@@ -25,59 +25,18 @@ struct player_t{
 	uint32_t face_dir;
 	uint32_t ctrl_dir;
 	uint32_t move_dir;
-	/////
-	
-	///// Animations
+
 	anim_t *idle_r, *move_r, *skid_r, *jump_r, *hang_r, *fall_r;
 	anim_t *idle_l, *move_l, *skid_l, *jump_l, *hang_l, *fall_l;
 };
+
+static player_t *THE_PLAYER = NULL;
 
 static void load_player_animations(void){
 	static bool animations_are_loaded;
 	
 	if(animations_are_loaded == false){
 		animations_are_loaded = true;
-		
-        /*
-		fset_t *player_frames = fset_load("player_hazard.png", 10, 10);
-		
-		anim_create("player_idle_r", player_frames,  0,  3,  4);
-		anim_create("player_move_r", player_frames, 10,  8, 12);
-		anim_create("player_skid_r", player_frames, 12,  1, 10);
-
-		anim_create("player_jump_r", player_frames, 20,  1, 10);
-		anim_create("player_hang_r", player_frames, 21,  1, 10);
-		anim_create("player_fall_r", player_frames, 22,  1, 10);
-
-		anim_create("player_idle_l", player_frames, 30,  3,  4);
-		anim_create("player_move_l", player_frames, 40,  8, 12);
-		anim_create("player_skid_l", player_frames, 42,  1, 10);
-
-		anim_create("player_jump_l", player_frames, 50,  1, 10);
-		anim_create("player_hang_l", player_frames, 51,  1, 10);
-		anim_create("player_fall_l", player_frames, 52,  1, 10);
-        */
-        
-        /*
-		fset_t *player_frames = fset_load("player_astro.png", 10, 10);
-		
-		anim_create("player_idle_r", player_frames,  0,  2,  4);
-		anim_create("player_move_r", player_frames, 10, 10, 12);
-		anim_create("player_skid_r", player_frames, 18,  1, 10);
-
-		anim_create("player_jump_r", player_frames, 20,  1, 10);
-		anim_create("player_hang_r", player_frames, 21,  1, 10);
-		anim_create("player_fall_r", player_frames, 22,  1, 10);
-
-		anim_create("player_idle_l", player_frames, 30,  2,  4);
-		anim_create("player_move_l", player_frames, 40, 10, 12);
-		anim_create("player_skid_l", player_frames, 48,  1, 10);
-
-		anim_create("player_jump_l", player_frames, 50,  1, 10);
-		anim_create("player_hang_l", player_frames, 51,  1, 10);
-		anim_create("player_fall_l", player_frames, 52,  1, 10);
-        */
-        
         
 		fset_t *player_frames = fset_load("player_warrior.png", 8, 8);
 		
@@ -96,7 +55,6 @@ static void load_player_animations(void){
 		anim_create("player_jump_l", player_frames, 48, 3, 10);
 		anim_create("player_hang_l", player_frames, 51, 2, 10);
 		anim_create("player_fall_l", player_frames, 53, 3, 10);
-        
 	}
 }
 
@@ -105,7 +63,7 @@ player_t *player_create(void){
 	
 	player->body = body_create();
 	player->sprite = sprite_create();
-	
+
 	player->flashing = 0;
    
 	player->body->rect->x = 0;
@@ -150,41 +108,28 @@ void player_delete(player_t *player){
 	free(player);
 }
 
-void player_update(player_t *player, game_t *game){
-	sprite_update(player->sprite);
-
-	if(player->flashing > 0){
-		player->flashing -= 1;
-	}
-	
-	player_update_controls(player, game);
-	player_update_animation(player, game);
-	do_physics_to_it(player->body, game->active_map->terrain_rects, game->active_map->platform_rects);
-	sprite_move_to(player->sprite, player->body->rect);
-}
-
-void player_update_controls(player_t *player, game_t *game){
+void player_update_controls(player_t *player, controller_t *controller){
 	player->body->flags &= ~PLAT_DROP;
 
 	if(player->body->vy < player->fall_speed){
 		player->body->vy = fmin(player->fall_speed, player->body->vy + player->fall_accel);
 	}
 
-	if(controller_pressed(game->controller, BTN_D)){
+	if(controller_pressed(controller, BTN_D)){
 		player->body->flags |= PLAT_DROP;
 	}
 	
-	if(controller_just_pressed(game->controller, BTN_U)){
-		if(player->body->flags & BLOCKED_D && controller_released(game->controller, BTN_D)){
+	if(controller_just_pressed(controller, BTN_U)){
+		if(player->body->flags & BLOCKED_D && controller_released(controller, BTN_D)){
 			player->body->vy = player->jump_force;
 		}
-	}else if(controller_just_released(game->controller, BTN_U)){
+	}else if(controller_just_released(controller, BTN_U)){
 		if(player->body->vy < player->jump_brake){
 			player->body->vy = player->jump_brake;
 		}
 	}
 	
-	if(controller_pressed(game->controller, BTN_R)){
+	if(controller_pressed(controller, BTN_R)){
 		player->face_dir = DIR_R;
 		player->ctrl_dir = DIR_R;
 		if(player->body->vx < 0){
@@ -192,7 +137,7 @@ void player_update_controls(player_t *player, game_t *game){
 		}else if(player->body->vx < player->ground_speed){
 			player->body->vx = fmin(player->ground_speed, player->body->vx + player->ground_accel);
 		}
-	}else if(controller_pressed(game->controller, BTN_L)){
+	}else if(controller_pressed(controller, BTN_L)){
 		player->face_dir = DIR_L;
 		player->ctrl_dir = DIR_L;
 		if(player->body->vx > 0){
@@ -218,7 +163,7 @@ void player_update_controls(player_t *player, game_t *game){
 	}
 }
 
-void player_update_animation(player_t *player, game_t *game){
+void player_select_animation(player_t *player){
 	if(player->body->flags & BLOCKED_D){
 		if(player->move_dir == DIR_X){
 			if(player->face_dir == DIR_R){
@@ -260,6 +205,18 @@ void player_update_animation(player_t *player, game_t *game){
 	}
 }
 
+void player_update(player_t *player, game_t *game){
+	if(player->flashing > 0){
+		player->flashing -= 1;
+	}
+	
+	player_update_controls(player, game->controller);
+	do_physics_to_it(player->body, game->active_map->terrain_rects, game->active_map->platform_rects);
+	player_select_animation(player);
+    sprite_move_to(player->sprite, player->body->rect);
+	sprite_anim_update(player->sprite);
+}
+
 sprite_t *player_get_sprite(player_t *player){
 	return player->sprite;
 }
@@ -272,6 +229,19 @@ uint32_t player_get_facing(player_t *player){
 	return player->face_dir;
 }
 
-void player_move_to_coord(player_t *player, double x, double y){
-	rect_set_center(player->body->rect, x, y);
+void player_move_to_rect(player_t *player, rect_t *rect){
+	rect_move_to(player->body->rect, rect);
+}
+
+player_t *player_get_only(void){
+    if(THE_PLAYER == NULL){
+        THE_PLAYER = player_create();
+    }
+    return THE_PLAYER;
+}
+
+void player_cleanup(void){
+    if(THE_PLAYER != NULL){
+        player_delete(THE_PLAYER);
+    }
 }

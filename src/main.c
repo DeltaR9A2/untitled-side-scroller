@@ -15,7 +15,7 @@ int main_event_watch(void *data, SDL_Event *e){
 	game_t *game = (game_t *)data;
 	
 	if((e->type == SDL_QUIT)){
-		game->core->running = false;
+		core_stop_running(game->core);
 	}else if(e->type == SDL_KEYDOWN && e->key.keysym.scancode == SDL_SCANCODE_F11){
 		core_toggle_fullscreen(game->core);
 	}else if(e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED){
@@ -26,10 +26,14 @@ int main_event_watch(void *data, SDL_Event *e){
 }
 
 int main(void){
+    #ifdef DEBUG
+    printf("Game was compiled in debug mode.\n"); fflush(stdout);
+    #endif
+    
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
-	core_t *core = core_create();
-	game_t *game = game_create(core);
+	core_t *core = core_get_only();
+	game_t *game = game_get_only();
 
 	SDL_AddEventWatch(&main_event_watch, game);
 	
@@ -39,7 +43,7 @@ int main(void){
 	double ms_delta = 0;
 	double ms_accum = 0;
 	
-	while(core->running){
+	while(core_is_running(core)){
 		prev_ms = curr_ms;
 		curr_ms = SDL_GetTicks();
 		ms_delta = curr_ms - prev_ms;
@@ -59,9 +63,12 @@ int main(void){
 		}
 	}
 
-	game_delete(game);
-	core_delete(core);
+
 	
+    player_cleanup();
+    game_cleanup();
+    core_cleanup();
+
 	SDL_Quit();
 	
 	return 0;

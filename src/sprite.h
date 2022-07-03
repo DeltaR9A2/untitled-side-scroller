@@ -19,9 +19,10 @@ anim_t *anim_get(const char* name);
 
 sprite_t *sprite_create();
 void sprite_delete(sprite_t *sprite);
-void sprite_update(sprite_t *sprite);
 
 void sprite_move_to(sprite_t *sprite, rect_t *rect);
+
+void sprite_anim_update(sprite_t *sprite);
 void sprite_anim_set(sprite_t *sprite, anim_t *anim);
 void sprite_anim_set_by_name(sprite_t *sprite, const char *name);
 

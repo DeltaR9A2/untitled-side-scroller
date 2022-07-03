@@ -10,6 +10,22 @@ static SDL_Texture *create_streaming_texture(SDL_Renderer *render, int32_t w, in
 	return SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, w, h);
 }
 
+struct core_t{
+	bool running;
+	bool fullscreen;
+
+	SDL_Window *window;
+	int32_t win_vw, win_vh;
+	int32_t win_cw, win_ch;
+	SDL_Rect active_rect;
+
+	SDL_Renderer *rend;
+	SDL_Surface *screen;
+	SDL_Texture *screen_texture;
+};
+
+static core_t *THE_CORE = NULL;
+
 core_t *core_create(void){
 	core_t *core = malloc(sizeof(core_t));
 	
@@ -56,7 +72,7 @@ void core_delete(core_t *core){
 	free(core);
 }
 
-double core_get_scale(core_t *core){
+double core_get_window_scale(core_t *core){
 	double h_scale = (double)core->win_cw / (double)core->win_vw;
 	double v_scale = (double)core->win_ch / (double)core->win_vh;
 	return (h_scale < v_scale) ? h_scale : v_scale;
@@ -66,7 +82,7 @@ void core_window_resize(core_t *core, int32_t w, int32_t h){
 	core->win_cw = w;
 	core->win_ch = h;
 	
-	double scale = (int)core_get_scale(core);
+	double scale = (int)core_get_window_scale(core);
 	
 	core->active_rect.w = (int)(scale * core->win_vw);
 	core->active_rect.h = (int)(scale * core->win_vh);
@@ -93,8 +109,8 @@ void core_window_redraw(core_t *core){
 	SDL_RenderPresent(core->rend);
 }
 
-void core_get_mouse_pos(core_t *core, int32_t *x, int32_t *y){
-	double scale = core_get_scale(core);
+rect_t core_get_mouse_pos(core_t *core){
+	double scale = core_get_window_scale(core);
 
 	int mx, my;
 	SDL_GetMouseState(&mx, &my);
@@ -104,6 +120,36 @@ void core_get_mouse_pos(core_t *core, int32_t *x, int32_t *y){
 	mx = (int)((double)mx / scale);
 	my = (int)((double)my / scale);
 	
-	*x = mx;
-	*y = my;
+    return (rect_t){mx,my,0,0};
+}
+
+
+core_t *core_get_only(void){
+    if(THE_CORE == NULL){
+        THE_CORE = core_create();
+    }
+    return THE_CORE;
+}
+
+void core_cleanup(void){
+    if(THE_CORE != NULL){
+        core_delete(THE_CORE);
+        THE_CORE = NULL;
+    }
+}
+
+bool core_is_running(core_t *core){
+    return core->running;
+}
+
+void core_stop_running(core_t *core){
+    core->running = false;
+}
+
+SDL_Surface *core_get_screen_surface(core_t *core){
+    return core->screen;
+}
+
+rect_t core_get_window_size(core_t *core){
+    return (rect_t){0,0,core->win_cw,core->win_ch};
 }

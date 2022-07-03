@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "cmap.h"
-
+#include "stb_ds.h"
 const static int32_t GRID_SIZE = 8;
 
 cmap_t *cmap_create(void){
@@ -90,13 +90,14 @@ bool cmap_rect_check(cmap_t *cmap, rect_t *rect){
 	return true;
 }
 
-void cmap_add_to_rect_list(cmap_t *cmap, rect_list_t *rects){
+void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects){
 	rect_t *current_rect;
 	
 	CMAP_ITERATION_START;
 
+    current_rect = rect_create();
+
 	if(cmap->data[i] == 1){
-		current_rect = rect_list_get(rects);
 		rect_init(current_rect, x, y, 1, 1);
 		
 		while(cmap_rect_check(cmap, current_rect)){
@@ -117,6 +118,8 @@ void cmap_add_to_rect_list(cmap_t *cmap, rect_list_t *rects){
 		current_rect->h *= GRID_SIZE;
 	}
 	
+    arrput(*rects, *current_rect);
+    
 	CMAP_ITERATION_STOP;
 }
 

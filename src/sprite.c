@@ -19,11 +19,18 @@ SDL_Surface *convert_surface(SDL_Surface *src){
 }
 
 SDL_Surface *load_image(const char *fn){
+    #ifdef DEBUG
+    printf("Loading image: %s\n", fn); fflush(stdout);
+    #endif
+    
 	SDL_Surface *image = shget(image_cache, fn);
 
 	if(image == NULL){
 		int w, h, of;
 		unsigned char *data = stbi_load(fn, &w, &h, &of, 4);
+        if(data == NULL){
+            printf("ERROR: Image failed to load: %s\n", fn); fflush(stdout);
+        }
 		SDL_Surface *tmp = SDL_CreateRGBSurfaceFrom((void*)data, w, h, 32, 4*w,0x000000FF,0x0000FF00,0x00FF0000,0xFF000000);
 		image = convert_surface(tmp);
 		SDL_FreeSurface(tmp);
@@ -124,7 +131,7 @@ struct sprite_t{
 	rect_t *rect;
 	anim_t *anim;
 	uint32_t step;
-};
+ };
 
 sprite_t *sprite_create(){
 	sprite_t *sprite = malloc(sizeof(sprite_t));
@@ -139,7 +146,9 @@ void sprite_delete(sprite_t *sprite){
 	free(sprite);
 }
 
-void sprite_update(sprite_t *sprite){ sprite->step += 1; }
+void sprite_anim_update(sprite_t *sprite){ 
+    sprite->step += 1; 
+ }
 
 void sprite_move_to(sprite_t *sprite, rect_t *rect){ rect_move_to(sprite->rect, rect); }
 

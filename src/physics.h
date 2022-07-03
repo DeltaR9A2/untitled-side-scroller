@@ -28,6 +28,6 @@ void body_set_size(body_t *body, double w, double h);
 void body_move_to(body_t *body, rect_t *rect);
 void body_set_velocity(body_t *body, double vx, double vy);
 
-void do_physics_to_it(body_t *body, rect_list_t *terr_rects, rect_list_t *plat_rects);
+void do_physics_to_it(body_t *body, rect_t *terr_rects, rect_t *plat_rects);
 
 #endif

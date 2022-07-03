@@ -186,7 +186,7 @@ menu_t *menu_create_main_menu(game_t *game){
 }
 
 void menu_exit(menu_t *menu){
-	menu->game->core->running = false;
+	core_stop_running(menu->game->core);
 }
 
 void menu_new_game(menu_t *menu){

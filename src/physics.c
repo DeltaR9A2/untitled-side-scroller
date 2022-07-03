@@ -8,6 +8,8 @@ const uint32_t BLOCKED_MASK = 0x0000000F;
 
 const uint32_t PLAT_DROP = 0x00000010;
 
+#include "stb_ds.h"
+
 body_t *body_create(void){
 	body_t *body = malloc(sizeof(body_t));
 	body->rect = rect_create();
@@ -39,66 +41,59 @@ void body_set_velocity(body_t *body, double vx, double vy){
 	body->vy = vy;
 }
 
-void do_physics_to_it(body_t *body, rect_list_t *terr_rects, rect_list_t *plat_rects){
-	rect_t *start = rect_create();
-	rect_match_to(start, body->rect);
-	
-	rect_node_t *iter;
+void do_physics_to_it(body_t *body, rect_t *terr_rects, rect_t *plat_rects){
+	rect_t start = (rect_t){0,0,0,0};
+	rect_match_to(&start, body->rect);
 	
 	body->flags &= ~BLOCKED_MASK;
 	
 	body->rect->x += body->vx;
-	iter = terr_rects->head;
-	while(iter != NULL){
-		if(rect_overlap(body->rect, iter->data)){
-			if(body->vx > 0 && rect_get_r_edge(body->rect) >= rect_get_l_edge(iter->data)){
+	for(int i=0; i<arrlen(terr_rects); i++){
+        rect_t *curr_rect = &terr_rects[i];
+		if(rect_overlap(body->rect, curr_rect)){
+			if(body->vx > 0 && rect_get_r_edge(body->rect) >= rect_get_l_edge(curr_rect)){
 				body->vx = 0;
-				rect_set_r_edge(body->rect, rect_get_l_edge(iter->data));
+				rect_set_r_edge(body->rect, rect_get_l_edge(curr_rect));
 				body->flags |= BLOCKED_R;
-			}else if(body->vx < 0 && rect_get_l_edge(body->rect) <= rect_get_r_edge(iter->data)){
+			}else if(body->vx < 0 && rect_get_l_edge(body->rect) <= rect_get_r_edge(curr_rect)){
 				body->vx = 0;
-				rect_set_l_edge(body->rect, rect_get_r_edge(iter->data));
+				rect_set_l_edge(body->rect, rect_get_r_edge(curr_rect));
 				body->flags |= BLOCKED_L;
 			}
 			break;
 		}
-		iter = iter->next;
 	}
 
 	body->rect->y += body->vy;
-	iter = terr_rects->head;
-	while(iter != NULL){
-		if(rect_overlap(body->rect, iter->data)){
-			if(body->vy > 0 && rect_get_b_edge(body->rect) >= rect_get_t_edge(iter->data)){
+	for(int i=0; i<arrlen(terr_rects); i++){
+        rect_t *curr_rect = &terr_rects[i];
+		if(rect_overlap(body->rect, curr_rect)){
+			if(body->vy > 0 && rect_get_b_edge(body->rect) >= rect_get_t_edge(curr_rect)){
 				body->vy = 0;
-				rect_set_b_edge(body->rect, rect_get_t_edge(iter->data));
+				rect_set_b_edge(body->rect, rect_get_t_edge(curr_rect));
 				body->flags |= BLOCKED_D;
-			}else if(body->vy < 0 && rect_get_t_edge(body->rect) <= rect_get_b_edge(iter->data)){
+			}else if(body->vy < 0 && rect_get_t_edge(body->rect) <= rect_get_b_edge(curr_rect)){
 				body->vy = 0;
-				rect_set_t_edge(body->rect, rect_get_b_edge(iter->data));
+				rect_set_t_edge(body->rect, rect_get_b_edge(curr_rect));
 				body->flags |= BLOCKED_U;
 			}
 			break;
 		}
-		iter = iter->next;
 	}
 	
 	if(body->vy > 0 && !(body->flags & PLAT_DROP)){
-		iter = plat_rects->head;
-		while(iter != NULL){
-			if(rect_overlap(body->rect, iter->data)){
-				if(rect_get_b_edge(start) <= rect_get_t_edge(iter->data)){
+        for(int i=0; i<arrlen(plat_rects); i++){
+            rect_t *curr_rect = &plat_rects[i];
+			if(rect_overlap(body->rect, curr_rect)){
+				if(rect_get_b_edge(&start) <= rect_get_t_edge(curr_rect)){
 					body->vy = 0;
-					rect_set_b_edge(body->rect, rect_get_t_edge(iter->data));
+					rect_set_b_edge(body->rect, rect_get_t_edge(curr_rect));
 					body->flags |= BLOCKED_D;
 					break;
 				}
 
 			}
-			iter = iter->next;
 		}
 	}
-	
-	rect_delete(start);
 }
 
