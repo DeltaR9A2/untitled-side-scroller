@@ -10,6 +10,7 @@
 #include "core.h"
 #include "game.h"
 #include "controller.h"
+#include "parser.h"
 
 int main_event_watch(void *data, SDL_Event *e){
 	game_t *game = (game_t *)data;
@@ -36,6 +37,10 @@ int main(void){
 	game_t *game = game_get_only();
 
     controller_init();
+
+    //////////
+    parse_file("parser_test.txt");
+    //////////
 
 	SDL_AddEventWatch(&main_event_watch, game);
 	
