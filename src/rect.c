@@ -139,16 +139,16 @@ bool rect_overlap(rect_t *rect, rect_t *other){
 		}
 }
 
-/*
-	def union(self, other):
-		"""Expands ``self`` exactly enough to cover the entire area of ``other``."""
-		new_l = min(self.l_edge, other.l_edge)
-		new_t = min(self.t_edge, other.t_edge)
-		new_r = max(self.r_edge, other.r_edge)
-		new_b = max(self.b_edge, other.b_edge)
-		self.x = new_l
-		self.y = new_t
-		self.w = new_r - new_l
-		self.h = new_b - new_t
-*/
-
+bool rect_inside_of(rect_t *rect, rect_t *other){
+	if((rect->w > other->w) || (rect->h > other->h)){
+		return false;
+	}
+    
+    if((rect->x < other->x) || (rect->y < other->y) ||
+       ((rect->x + rect->w) > (other->x + other->w)) ||
+       ((rect->y + rect->h) > (other->y + other->h)) ){
+        return false;
+    }else{
+        return true;
+    }
+}

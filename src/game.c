@@ -37,7 +37,13 @@ void game_set_message(game_t *game, const char *text){
 	font_draw_string(game->font, game->message, 8, 4, game->message_surface);
 }
 
-void game_select_map(game_t *game, const char *map_name){
+void game_select_map(game_t *game, const uint8_t x, const uint8_t y){
+    game->map_world_x = x;
+    game->map_world_y = y;
+
+    char map_name[256];
+    snprintf(map_name, 256, "map_%i_%i", x, y);
+
 	game->active_map = map_load(map_name);
 	camera_limit_to(game->camera, map_get_rect(game->active_map));
 }
@@ -56,7 +62,7 @@ game_t *game_create(void){
 	game->font = font_create("font_nokia.png");
 	game->debug_font = font_create("font_nokia.png");
 
-	game_select_map(game, "map_test");
+	game_select_map(game, 0, 0);
 
 	game->menu = menu_create_main_menu(game);
 	
@@ -89,26 +95,18 @@ void game_fast_frame(game_t *game){
 	game->step += 1;
 
 	if(game->mode == GAME_MODE_MENU){
-		if(controller_just_pressed(BTN_U)){
-			menu_up(game->menu);
-		}
-		if(controller_just_pressed(BTN_D)){
-			menu_down(game->menu);
-		}
-		if(controller_just_pressed(BTN_A)){
-			menu_activate(game->menu);
-		}
-		if(controller_just_pressed(BTN_START)){
-			menu_activate(game->menu);
-		}
-
+		if(controller_just_pressed(BTN_U)){ menu_up(game->menu); }
+		if(controller_just_pressed(BTN_D)){ menu_down(game->menu); }
+		if(controller_just_pressed(BTN_A)){ menu_activate(game->menu); }
+		if(controller_just_pressed(BTN_START)){ menu_activate(game->menu); }
 	}else if(game->mode == GAME_MODE_PLAY){
-		player_update(game->player, game);
-
 		if(controller_just_pressed(BTN_START)){
 			game->mode = GAME_MODE_MENU;
-			camera_set_fade(game->camera, 0x000000CC);
+			camera_set_fade(game->camera, 0x000000AA);
+            return;
 		}
+
+		player_update(game->player, game);
 	}
 }
 

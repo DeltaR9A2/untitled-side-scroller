@@ -210,8 +210,8 @@ map_t *map_load(const char *map_name){
 
         char map_image_fn[256]; // 256 = max posix fn length + terminator
         char map_rects_fn[256];
-        snprintf(map_image_fn, 256, "%s_image.png", map_name);
-        snprintf(map_rects_fn, 256, "%s_rects.png", map_name);
+        snprintf(map_image_fn, 256, "./maps/%s/terrain.png", map_name);
+        snprintf(map_rects_fn, 256, "./maps/%s/terrain-int.png", map_name);
         map_init(this_map, map_rects_fn, map_image_fn);
     }
 
@@ -231,4 +231,12 @@ rect_t *map_get_terrain_rects(map_t *map){
 
 rect_t *map_get_platform_rects(map_t *map){
     return map->platform_rects;
+}
+
+double map_get_w(map_t *map){
+    return map->rect.w;
+}
+
+double map_get_h(map_t *map){
+    return map->rect.h;
 }

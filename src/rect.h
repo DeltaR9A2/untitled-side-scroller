@@ -51,5 +51,6 @@ void rect_move_at_angle(rect_t *rect, double angle, double dist);
 void rect_move_toward(rect_t *rect, rect_t *other, double dist);
 
 bool rect_overlap(rect_t *rect, rect_t *other);
+bool rect_inside_of(rect_t *rect, rect_t *other);
 
 #endif

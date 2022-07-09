@@ -15,6 +15,7 @@ REMOVE = rm -f
 .SUFFIXES: .xcf .png .wav .ogg .mp3
 
 all: images sounds music
+	rsync ./maps/simplified/ ../bin/maps --delete -r
 
 images: $(OUT_IMAGES)
 

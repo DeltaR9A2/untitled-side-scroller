@@ -15,4 +15,7 @@ SDL_Surface *map_get_image(map_t *map);
 rect_t *map_get_terrain_rects(map_t *map);
 rect_t *map_get_platform_rects(map_t *map);
 
+double map_get_w(map_t *map);
+double map_get_h(map_t *map);
+
 #endif

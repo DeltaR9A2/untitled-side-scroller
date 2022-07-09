@@ -9,13 +9,19 @@ const uint32_t DIR_X = 0;
 const uint32_t DIR_R = 1;
 const uint32_t DIR_L = 2;
 
-const uint32_t BLOCKED_L = 0x00000001;
-const uint32_t BLOCKED_R = 0x00000002;
-const uint32_t BLOCKED_U = 0x00000004;
-const uint32_t BLOCKED_D = 0x00000008;
+const uint32_t BLOCKED_L =    0x00000001;
+const uint32_t BLOCKED_R =    0x00000002;
+const uint32_t BLOCKED_U =    0x00000004;
+const uint32_t BLOCKED_D =    0x00000008;
 const uint32_t BLOCKED_MASK = 0x0000000F;
 
-const uint32_t PLAT_DROP = 0x00000010;
+const uint32_t HIT_MAP_EDGE_L =    0x00000010;
+const uint32_t HIT_MAP_EDGE_R =    0x00000020;
+const uint32_t HIT_MAP_EDGE_U =    0x00000040;
+const uint32_t HIT_MAP_EDGE_D =    0x00000080;
+const uint32_t HIT_MAP_EDGE_MASK = 0x000000F0;
+
+const uint32_t PLAT_DROP = 0x00000100;
 
 struct player_t{
 	sprite_t *sprite;
@@ -84,14 +90,14 @@ player_t *player_create(void){
     player->vx = 0;
     player->vy = 0;
 	
-	player->fall_speed = 6.00;
-	player->fall_accel = 0.12;
+	player->fall_speed = 5.00;
+	player->fall_accel = 0.11;
 	
-	player->ground_speed = 2.50;
+	player->ground_speed = 2.60;
 	player->ground_accel = 0.08;
-	player->ground_decel = 0.10;
+	player->ground_decel = 0.12;
 	
-	player->jump_force = -4.4;
+	player->jump_force = -4.0;
 	player->jump_brake = -0.4;
 
 	player->face_dir = DIR_R;
@@ -249,6 +255,7 @@ void player_cleanup(void){
 }
 
 void player_move_and_collide_with_map(player_t *player, map_t *map){
+    rect_t *map_bounds = map_get_rect(map);
     rect_t *terr_rects = map_get_terrain_rects(map);
     rect_t *plat_rects = map_get_platform_rects(map);
     
@@ -305,13 +312,51 @@ void player_move_and_collide_with_map(player_t *player, map_t *map){
 			}
 		}
 	}
+    
+    player->flags &= ~HIT_MAP_EDGE_MASK;
+    if(!rect_inside_of(player->rect, map_bounds)){
+        if(rect_get_r_edge(player->rect) > rect_get_r_edge(map_bounds)){
+            player->flags |= HIT_MAP_EDGE_R;
+        }else if(rect_get_l_edge(player->rect) < rect_get_l_edge(map_bounds)){
+            player->flags |= HIT_MAP_EDGE_L;
+        }
+        
+        if(rect_get_b_edge(player->rect) > rect_get_b_edge(map_bounds)){
+            player->flags |= HIT_MAP_EDGE_D;
+        }else if(rect_get_t_edge(player->rect) < rect_get_t_edge(map_bounds)){
+            player->flags |= HIT_MAP_EDGE_U;
+        }
+        
+        rect_limit_to(player->rect, map_bounds);
+    }
 }
+
+// Player is placed this distance from the edge when entering a map.
+static const double MAP_ENTRY_OFFSET = 10;
 
 void player_update(player_t *player, game_t *game){
 	player_update_controls(player, game->controller);
     player_move_and_collide_with_map(player, game->active_map);
-	player_select_animation(player);
 
+    if(player->flags & HIT_MAP_EDGE_MASK){
+        if(player->flags & HIT_MAP_EDGE_R){
+            game_select_map(game, game->map_world_x+1, game->map_world_y);
+            rect_set_l_edge(player->rect, MAP_ENTRY_OFFSET);
+        }else if(player->flags & HIT_MAP_EDGE_L){
+            game_select_map(game, game->map_world_x-1, game->map_world_y);
+            rect_set_r_edge(player->rect, map_get_w(game->active_map) - MAP_ENTRY_OFFSET);
+        }
+        
+        if(player->flags & HIT_MAP_EDGE_D){
+            game_select_map(game, game->map_world_x, game->map_world_y+1);
+            rect_set_t_edge(player->rect, MAP_ENTRY_OFFSET);
+        }else if(player->flags & HIT_MAP_EDGE_U){
+            game_select_map(game, game->map_world_x, game->map_world_y-1);
+            rect_set_b_edge(player->rect, map_get_h(game->active_map) - MAP_ENTRY_OFFSET);
+        }
+    }
+
+	player_select_animation(player);
     sprite_move_to(player->sprite, player->rect);
 	sprite_anim_update(player->sprite);
 }

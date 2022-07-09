@@ -16,6 +16,7 @@ extern const uint32_t BLOCKED_D;
 extern const uint32_t BLOCKED_MASK;
 
 extern const uint32_t PLAT_DROP;
+extern const uint32_t HIT_MAP_EDGE;
 
 extern const uint32_t DIR_X;
 extern const uint32_t DIR_R;
