@@ -91,13 +91,13 @@ player_t *player_create(void){
     player->vy = 0;
 	
 	player->fall_speed = 5.00;
-	player->fall_accel = 0.11;
+	player->fall_accel = 0.12;
 	
-	player->ground_speed = 2.60;
-	player->ground_accel = 0.08;
+	player->ground_speed = 2.25;
+	player->ground_accel = 0.06;
 	player->ground_decel = 0.12;
 	
-	player->jump_force = -4.0;
+	player->jump_force = -3.5;
 	player->jump_brake = -0.4;
 
 	player->face_dir = DIR_R;
@@ -255,9 +255,9 @@ void player_cleanup(void){
 }
 
 void player_move_and_collide_with_map(player_t *player, map_t *map){
-    rect_t *map_bounds = map_get_rect(map);
-    rect_t *terr_rects = map_get_terrain_rects(map);
-    rect_t *plat_rects = map_get_platform_rects(map);
+    rect_t *map_bounds = map->rect;
+    rect_t *terr_rects = map->terrain_rects;
+    rect_t *plat_rects = map->platform_rects;
     
 	rect_t start = (rect_t){0,0,0,0};
 	rect_match_to(&start, player->rect);
@@ -332,30 +332,65 @@ void player_move_and_collide_with_map(player_t *player, map_t *map){
 }
 
 // Player is placed this distance from the edge when entering a map.
-static const double MAP_ENTRY_OFFSET = 10;
+static const double MAP_ENTRY_OFFSET = 2;
+void player_check_for_map_transition(player_t *player, game_t *game){
+    if(player->flags & HIT_MAP_EDGE_MASK){
+        int32_t starting_world_x = game->map_world_x;
+        int32_t starting_world_y = game->map_world_y;
+    
+        int32_t player_offset_x = (int32_t)(rect_get_mid_x(player->rect)/WORLD_CELL_W);
+        int32_t player_offset_y = (int32_t)(rect_get_mid_y(player->rect)/WORLD_CELL_H);
+
+        int32_t direction_adjust_x = 0;
+        int32_t direction_adjust_y = 0;
+    
+        if(player->flags & HIT_MAP_EDGE_R){
+            direction_adjust_x += 1; //map_get_cell_w(game->active_map);
+        }else if(player->flags & HIT_MAP_EDGE_L){
+            direction_adjust_x -= 1;
+        }else if(player->flags & HIT_MAP_EDGE_D){
+            direction_adjust_y += 1; //map_get_cell_h(game->active_map);
+        }else if(player->flags & HIT_MAP_EDGE_U){
+            direction_adjust_y -= 1;
+        }
+
+        int32_t target_world_x = starting_world_x + player_offset_x + direction_adjust_x;
+        int32_t target_world_y = starting_world_y + player_offset_y + direction_adjust_y;
+
+        if(map_exists_at_coords(target_world_x, target_world_y)){
+            game_select_map(game, target_world_x, target_world_y);
+            
+            map_t *new_map = game->active_map;
+            
+            int32_t relative_world_x = target_world_x - new_map->world_x;
+            int32_t relative_world_y = target_world_y - new_map->world_y;
+            
+            int32_t player_x_pos_correction = (relative_world_x - player_offset_x) * WORLD_CELL_W;
+            int32_t player_y_pos_correction = (relative_world_y - player_offset_y) * WORLD_CELL_H;
+            
+            if(player->flags & HIT_MAP_EDGE_R){
+                rect_set_l_edge(player->rect, MAP_ENTRY_OFFSET);
+                player->rect->y += player_y_pos_correction;
+                //player->vy = 0;
+            }else if(player->flags & HIT_MAP_EDGE_L){
+                rect_set_r_edge(player->rect, map_get_w(game->active_map) - MAP_ENTRY_OFFSET);
+                player->rect->y += player_y_pos_correction;
+                //player->vy = 0;
+            }else if(player->flags & HIT_MAP_EDGE_D){
+                rect_set_t_edge(player->rect, MAP_ENTRY_OFFSET);
+                player->rect->x += player_x_pos_correction;
+            }else if(player->flags & HIT_MAP_EDGE_U){
+                rect_set_b_edge(player->rect, map_get_h(game->active_map) - MAP_ENTRY_OFFSET);
+                player->rect->x += player_x_pos_correction;
+            }            
+        }
+    }
+}
 
 void player_update(player_t *player, game_t *game){
 	player_update_controls(player, game->controller);
     player_move_and_collide_with_map(player, game->active_map);
-
-    if(player->flags & HIT_MAP_EDGE_MASK){
-        if(player->flags & HIT_MAP_EDGE_R){
-            game_select_map(game, game->map_world_x+1, game->map_world_y);
-            rect_set_l_edge(player->rect, MAP_ENTRY_OFFSET);
-        }else if(player->flags & HIT_MAP_EDGE_L){
-            game_select_map(game, game->map_world_x-1, game->map_world_y);
-            rect_set_r_edge(player->rect, map_get_w(game->active_map) - MAP_ENTRY_OFFSET);
-        }
-        
-        if(player->flags & HIT_MAP_EDGE_D){
-            game_select_map(game, game->map_world_x, game->map_world_y+1);
-            rect_set_t_edge(player->rect, MAP_ENTRY_OFFSET);
-        }else if(player->flags & HIT_MAP_EDGE_U){
-            game_select_map(game, game->map_world_x, game->map_world_y-1);
-            rect_set_b_edge(player->rect, map_get_h(game->active_map) - MAP_ENTRY_OFFSET);
-        }
-    }
-
+    player_check_for_map_transition(player, game);
 	player_select_animation(player);
     sprite_move_to(player->sprite, player->rect);
 	sprite_anim_update(player->sprite);

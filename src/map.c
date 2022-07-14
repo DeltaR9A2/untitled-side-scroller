@@ -3,10 +3,15 @@
 #include "map.h"
 #include "sprite.h"
 #include "stb_ds.h"
+#include "tinydir.h"
 
+const int32_t GRID_SIZE = 16;
+const double WORLD_CELL_W = 128.0;
+const double WORLD_CELL_H = 128.0;
+
+
+//= cmap is collision map =================================
 typedef struct cmap_t cmap_t;
-
-const static int32_t GRID_SIZE = 8;
 
 struct cmap_t{
 	rect_t *rect;
@@ -132,50 +137,83 @@ void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects){
 	CMAP_ITERATION_STOP;
 }
 
-struct map_t{
-	rect_t rect;
+#undef CMAP_ITERATION_START
+#undef CMAP_ITERATION_STOP
+#undef CMAP_RECT_ITERATION_START
+#undef CMAP_RECT_ITERATION_STOP 
+//=========================================================
 
-	SDL_Surface *image;
-	
-	rect_t *terrain_rects;
-	rect_t *platform_rects;
-};
+#define WORLD_SIZE 256
+static map_t* WORLD_MAP_GRID[WORLD_SIZE][WORLD_SIZE];
 
-static struct { char *key; map_t *value; } *map_index = NULL;
+//static struct { char *key; map_t *value; } *map_index = NULL;
 
 map_t *map_create(void){
 	map_t *map = malloc(sizeof(map_t));
 
-	map->rect = (rect_t){0,0,0,0};
-	
-	map->image = NULL;
-
+	map->rect = rect_create();
 	map->terrain_rects = NULL;
 	map->platform_rects = NULL;
-	
+	map->image = NULL;
+    
+    map->world_x = 0;
+    map->world_y = 0;
+
 	return map;
 }
 
 void map_delete(map_t *map){
 	arrfree(map->platform_rects);
 	arrfree(map->terrain_rects);
-	
+	rect_delete(map->rect);
 	free(map);
 }
+void map_update(map_t *map){
+    return;
+}
 
-void map_init(map_t *map, const char *data_fn, const char *image_fn){
-	SDL_Surface *map_data = load_image(data_fn);
+double map_get_w(map_t *map){
+    return map->rect->w;
+}
 
-	rect_init(&map->rect, 0, 0, map_data->w * 8, map_data->h * 8);
+double map_get_h(map_t *map){
+    return map->rect->h;
+}
+
+double map_get_cell_w(map_t *map){
+    return (uint32_t)ceil(map->rect->w / WORLD_CELL_W);
+}
+
+double map_get_cell_h(map_t *map){
+    return (uint32_t)ceil(map->rect->h / WORLD_CELL_H);
+}
+
+map_t *map_load_by_name(const char *map_name){
+    map_t *map = map_create();
+    
+    char map_rects_fn[1024];
+    snprintf(map_rects_fn, 1024, "./maps/%s/terrain-int.png", map_name);
+	SDL_Surface *map_rects = load_image(map_rects_fn);
+    
+    if(map_rects == NULL){ 
+        map_delete(map);
+        return NULL; 
+    }
+
+    char map_image_fn[1024];
+    snprintf(map_image_fn, 1024, "./maps/%s/_composite.png", map_name);
+	map->image = load_image(map_image_fn);
+
+	rect_init(map->rect, 0, 0, map_rects->w * GRID_SIZE, map_rects->h * GRID_SIZE);
 
 	cmap_t *terrain_cmap = cmap_create();
-	cmap_init(terrain_cmap, 0, 0, map_data->w, map_data->h);
+	cmap_init(terrain_cmap, 0, 0, map_rects->w, map_rects->h);
 
 	cmap_t *platform_cmap = cmap_create();
-	cmap_init(platform_cmap, 0, 0, map_data->w, map_data->h);
+	cmap_init(platform_cmap, 0, 0, map_rects->w, map_rects->h);
 
-	for(int i=0; i < map_data->w * map_data->h; i++){
-		uint32_t pixel = ((Uint32 *)map_data->pixels)[i];
+	for(int i=0; i < map_rects->w * map_rects->h; i++){
+		uint32_t pixel = ((Uint32 *)map_rects->pixels)[i];
 
 		if(pixel == 0x333366FF){
 			terrain_cmap->data[i] = 1;
@@ -195,48 +233,79 @@ void map_init(map_t *map, const char *data_fn, const char *image_fn){
 	cmap_add_to_rect_list(platform_cmap, &map->platform_rects);
 	cmap_delete(platform_cmap);
 
-	map->image = load_image(image_fn);
+
+    return map;
 }
 
-void map_update(map_t *map){
-    return;
-}
+map_t *map_load_by_coords(int32_t x, int32_t y){
+    map_t *map = WORLD_MAP_GRID[x][y];
 
-map_t *map_load(const char *map_name){
-	map_t *this_map = shget(map_index, map_name);
-    
-    if(this_map == NULL){
-        this_map = map_create();
+    if(map != NULL){ return map; }
 
-        char map_image_fn[256]; // 256 = max posix fn length + terminator
-        char map_rects_fn[256];
-        snprintf(map_image_fn, 256, "./maps/%s/terrain.png", map_name);
-        snprintf(map_rects_fn, 256, "./maps/%s/terrain-int.png", map_name);
-        map_init(this_map, map_rects_fn, map_image_fn);
+    char map_name[1024];
+    snprintf(map_name, 1024, "map_%i_%i", x, y);   
+
+    map = map_load_by_name(map_name);
+
+    if(map == NULL){ return NULL; }
+
+    map->world_x = x;
+    map->world_y = y;
+
+    uint32_t cell_w = (uint32_t)map_get_cell_w(map);
+    uint32_t cell_h = (uint32_t)map_get_cell_h(map);
+        
+    for(int ix=0; ix<cell_w; ix++){
+        for(int iy=0; iy<cell_h; iy++){
+            WORLD_MAP_GRID[x+ix][y+iy] = map;
+        }
     }
 
-    return this_map;
+    return map;
 }
 
-SDL_Surface *map_get_image(map_t *map){
-    return map->image;
+bool map_exists_at_coords(int32_t x, int32_t y){
+    return !(WORLD_MAP_GRID[x][y] == NULL);
 }
 
-rect_t *map_get_rect(map_t *map){
-    return &map->rect;
-}
-rect_t *map_get_terrain_rects(map_t *map){
-    return map->terrain_rects;
+void map_attempt_preload(const char* map_name){
+    char *token = NULL;
+    char name_buffer[32];
+    
+    strncpy(name_buffer, map_name, 32);
+    token = strtok(name_buffer, "_");
+    
+    if(strncmp(token, "map", 3) == 0){
+        int x = 0;
+        int y = 0;
+        
+        token = strtok(NULL, "_");
+        x = atoi(token);
+        token = strtok(NULL, "_");
+        y = atoi(token);
+        
+        map_t *map = map_load_by_coords(x,y); 
+        if(map == NULL){
+            printf("Failed to preload map named %s \n", map_name);
+        }
+    }
 }
 
-rect_t *map_get_platform_rects(map_t *map){
-    return map->platform_rects;
+void map_preload_all(void){
+    tinydir_dir dir;
+    tinydir_file file;
+
+    tinydir_open(&dir, "./maps");
+
+    while(dir.has_next){
+        tinydir_readfile(&dir, &file);
+        map_attempt_preload(file.name);
+        tinydir_next(&dir);
+    }
+
+    tinydir_close(&dir);
 }
 
-double map_get_w(map_t *map){
-    return map->rect.w;
-}
+/*
 
-double map_get_h(map_t *map){
-    return map->rect.h;
-}
+        */

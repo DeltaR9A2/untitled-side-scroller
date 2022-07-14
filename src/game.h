@@ -36,8 +36,8 @@ struct game_t{
 	player_t *player;
 
 	map_t *active_map;
-    uint8_t map_world_x;
-    uint8_t map_world_y;
+    int32_t map_world_x;
+    int32_t map_world_y;
 	
 	//////////////////////////////
 	char *message;
@@ -53,6 +53,6 @@ void game_fast_frame(game_t *game);
 void game_full_frame(game_t *game);
 
 void game_set_message(game_t *game, const char *text);
-void game_select_map(game_t *game, uint8_t x, uint8_t y);
+void game_select_map(game_t *game, int32_t x, int32_t y);
 
 #endif

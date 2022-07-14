@@ -68,6 +68,8 @@ int main(void){
 				core_window_redraw(core);
 			}
 		}
+        
+        fflush(stdout);
 	}
 
 

@@ -2,6 +2,26 @@
 
 #include "core.h"
 
+// PC 3x   = 640x360  1.777  **
+// PC 4x   = 480x270  1.777
+// PC 5x   = 384x216  1.777  **
+// PC 6x   = 320x180  1.777
+
+// VGA MAX = 640x480  1.333  **  --
+// VGA 13h = 320x200  1.600  **  --
+// PAL     = 720x576  1.250  **
+// NTSC    = 720x480  1.500  **  --
+
+// SNES    = 256x224  1.143  **
+// GBA     = 240x160  1.500  **
+
+// SNES STRETCH = 1.166
+
+//384/240
+
+const int32_t VIRTUAL_SCREEN_W = 384;
+const int32_t VIRTUAL_SCREEN_H = 216;
+
 //static SDL_Texture *create_texture(SDL_Renderer *render, int32_t w, int32_t h){
 //	return SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, w, h);
 //}
@@ -32,8 +52,8 @@ core_t *core_create(void){
 	core->running = true;
 	core->fullscreen = false;
 
-	core->win_vw = 640;
-	core->win_vh = 360;
+	core->win_vw = VIRTUAL_SCREEN_W;
+	core->win_vh = VIRTUAL_SCREEN_H;
 	core->win_cw = core->win_vw*2;
 	core->win_ch = core->win_vh*2;
 	
@@ -61,6 +81,8 @@ core_t *core_create(void){
 	core->screen = create_surface(core->win_vw, core->win_vh);
 	core->screen_texture = create_streaming_texture(core->rend, core->win_vw, core->win_vh);
 
+    core_window_resize(core, core->win_vw*2, core->win_vh*2);
+
 	return core;
 }
 
@@ -73,8 +95,8 @@ void core_delete(core_t *core){
 }
 
 double core_get_window_scale(core_t *core){
-	double h_scale = (double)core->win_cw / (double)core->win_vw;
-	double v_scale = (double)core->win_ch / (double)core->win_vh;
+	double h_scale = (int)((double)core->win_cw / (double)core->win_vw);
+	double v_scale = (int)((double)core->win_ch / (double)core->win_vh);
 	return (h_scale < v_scale) ? h_scale : v_scale;
 }
 
@@ -82,13 +104,14 @@ void core_window_resize(core_t *core, int32_t w, int32_t h){
 	core->win_cw = w;
 	core->win_ch = h;
 	
-	double scale = (int)core_get_window_scale(core);
+	double scale = core_get_window_scale(core);
 	
-	core->active_rect.w = (int)(scale * core->win_vw);
+	core->active_rect.w = (int)(scale * core->win_vw); // SNES STRETCH core->active_rect.w *= 1.1666;
 	core->active_rect.h = (int)(scale * core->win_vh);
 	core->active_rect.x = (core->win_cw - core->active_rect.w)/2;
 	core->active_rect.y = (core->win_ch - core->active_rect.h)/2;
 	
+    
 	SDL_SetWindowSize(core->window, core->win_cw, core->win_ch);
 }
 

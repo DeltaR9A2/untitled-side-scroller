@@ -7,6 +7,9 @@
 
 #include "sprite.h"
 
+extern const int32_t VIRTUAL_SCREEN_W;
+extern const int32_t VIRTUAL_SCREEN_H;
+
 typedef struct core_t core_t;
 
 core_t *core_get_only();

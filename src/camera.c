@@ -91,14 +91,14 @@ void camera_debug_rect(camera_t *camera, rect_t rect, int32_t color){
 }
 
 void camera_draw_terrain_rects(camera_t *camera, game_t *game){
-    rect_t *rects = map_get_terrain_rects(game->active_map);
+    rect_t *rects = game->active_map->terrain_rects;
     for(int i=0; i < arrlen(rects); i++){
 		camera_debug_rect(camera, rects[i], 0x33336611);
     }
 }
 
 void camera_draw_platform_rects(camera_t *camera, game_t *game){
-    rect_t *rects = map_get_platform_rects(game->active_map);
+    rect_t *rects = game->active_map->platform_rects;
     for(int i=0; i < arrlen(rects); i++){
 		camera_debug_rect(camera, rects[i], 0x33336611);
     }
@@ -169,7 +169,7 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	camera->view->x = floor(camera->view->x);
 	camera->view->y = floor(camera->view->y);
 
-	SDL_FillRect(camera->buffer, NULL, 0xDDDDDDFF);
+	SDL_FillRect(camera->buffer, NULL, 0x111111FF);
 
 	#ifdef DEBUG
 	SDL_FillRect(camera->debug_buffer, NULL, 0x00000000);
@@ -182,7 +182,7 @@ void camera_draw_game(camera_t *camera, game_t *game){
 	camera_draw_platform_rects(camera, game);
 	#endif
 	
-	camera_draw_surface(camera, map_get_image(game->active_map));
+	camera_draw_surface(camera, game->active_map->image);
 	camera_draw_player(camera, game->player);
 
 	#ifdef DEBUG

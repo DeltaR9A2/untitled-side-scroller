@@ -37,15 +37,16 @@ void game_set_message(game_t *game, const char *text){
 	font_draw_string(game->font, game->message, 8, 4, game->message_surface);
 }
 
-void game_select_map(game_t *game, const uint8_t x, const uint8_t y){
-    game->map_world_x = x;
-    game->map_world_y = y;
+void game_select_map(game_t *game, int32_t x, int32_t y){
+    map_t *map = map_load_by_coords(x, y);
 
-    char map_name[256];
-    snprintf(map_name, 256, "map_%i_%i", x, y);
-
-	game->active_map = map_load(map_name);
-	camera_limit_to(game->camera, map_get_rect(game->active_map));
+    if(map == NULL){ return; }
+    
+    game->map_world_x = map->world_x;
+    game->map_world_y = map->world_y;
+    
+	game->active_map = map;
+	camera_limit_to(game->camera, game->active_map->rect);
 }
 
 game_t *game_create(void){
@@ -62,11 +63,12 @@ game_t *game_create(void){
 	game->font = font_create("font_nokia.png");
 	game->debug_font = font_create("font_nokia.png");
 
+    map_preload_all();
 	game_select_map(game, 0, 0);
 
 	game->menu = menu_create_main_menu(game);
 	
-	camera_init(game->camera, 640, 360);
+	camera_init(game->camera, VIRTUAL_SCREEN_W, VIRTUAL_SCREEN_H);
 
     game->message = calloc(GAME_MESSAGE_LEN, sizeof(char));
     game->message_surface = create_surface(640-16, 6+font_get_height(game->font));
@@ -126,7 +128,7 @@ void game_full_frame(game_t *game){
 	if(game->message_timeout > 0){
 		game->message_timeout -= 1;
 		draw_rect.x = 8;
-		draw_rect.y = 360 - (8+game->message_surface->h);
+		draw_rect.y = VIRTUAL_SCREEN_H - (8+game->message_surface->h);
 
 		SDL_BlitSurface(game->message_surface, NULL, core_get_screen_surface(game->core), &draw_rect);
 	}
