@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <SDL_image.h>
 
 #include "font.h"
 

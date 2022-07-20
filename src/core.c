@@ -19,8 +19,8 @@
 
 //384/240
 
-const int32_t VIRTUAL_SCREEN_W = 384;
-const int32_t VIRTUAL_SCREEN_H = 216;
+const int32_t VIRTUAL_SCREEN_W = 480;
+const int32_t VIRTUAL_SCREEN_H = 256;
 
 //static SDL_Texture *create_texture(SDL_Renderer *render, int32_t w, int32_t h){
 //	return SDL_CreateTexture(render, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, w, h);

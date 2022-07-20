@@ -6,7 +6,7 @@ export PC := pkg-config
 export PACKAGES := sdl2
 export TARGET := game
 export CFLAGS := -std=c11 -O2 `$(PC) --cflags $(PACKAGES)` -I./src
-export LFLAGS := -Wl,-rpath='$$ORIGIN/lib' `$(PC) --libs $(PACKAGES)`
+export LFLAGS := -Wl,-rpath='$$ORIGIN/lib' `$(PC) --libs $(PACKAGES)` -lm
 export REMOVE  := rm -rf
 ###############################
 
