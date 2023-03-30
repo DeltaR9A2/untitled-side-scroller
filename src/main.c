@@ -19,7 +19,10 @@ int main_event_watch(void *data, SDL_Event *e){
 		core_stop_running(game->core);
 	}else if(e->type == SDL_KEYDOWN && e->key.keysym.scancode == SDL_SCANCODE_F11){
 		core_toggle_fullscreen(game->core);
-	}else if(e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED){
+	}else if(e->type == SDL_WINDOWEVENT && (
+				(e->window.event == SDL_WINDOWEVENT_RESIZED) || 
+				(e->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+	)){
 		core_window_resize(game->core, e->window.data1, e->window.data2);
 	}
 	

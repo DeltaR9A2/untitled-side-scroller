@@ -112,7 +112,7 @@ void core_window_resize(core_t *core, int32_t w, int32_t h){
 	core->active_rect.y = (core->win_ch - core->active_rect.h)/2;
 	
     
-	SDL_SetWindowSize(core->window, core->win_cw, core->win_ch);
+	//SDL_SetWindowSize(core->window, core->win_cw, core->win_ch);
 }
 
 void core_toggle_fullscreen(core_t *core){
@@ -120,8 +120,10 @@ void core_toggle_fullscreen(core_t *core){
 	
 	if(core->fullscreen){
 		SDL_SetWindowFullscreen(core->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		core_window_resize(core, 0, 0);
 	}else{
 		SDL_SetWindowFullscreen(core->window, false);
+		core_window_resize(core, 0, 0);
 	}
 }
 
