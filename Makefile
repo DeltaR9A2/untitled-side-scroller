@@ -1,8 +1,15 @@
 
-# Standard Build ##############
-# export OS := linux
+# Linux Build #################
+export OS := linux
 export CC := gcc
 export PC := pkg-config
+
+# Windows Build ###############
+# export OS := windows
+# export CC := x86_64-w64-mingw32-gcc
+# export PC := x86_64-w64-mingw32-pkg-config
+
+###############################
 export PACKAGES := sdl2
 export TARGET := game
 export CFLAGS := -std=c11 -O2 `$(PC) --cflags $(PACKAGES)` -I./src
