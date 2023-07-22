@@ -94,7 +94,7 @@ player_t *player_create(void){
   player->fall_accel = 0.12;
   
   player->ground_speed = 2.25;
-  player->ground_accel = 0.18;
+  player->ground_accel = 0.08;
   player->ground_decel = 0.12;
   
   player->jump_force = -4.0;
@@ -152,7 +152,7 @@ void player_update_controls(player_t *player, controller_t *controller){
     player->face_dir = DIR_R;
     player->ctrl_dir = DIR_R;
     if(player->vx < 0){
-      player->vx += player->ground_accel;
+      player->vx += fmax( player->ground_decel, player->ground_accel );
     }else if(player->vx < player->ground_speed){
       player->vx = fmin(player->ground_speed, player->vx + player->ground_accel);
     }
@@ -160,7 +160,7 @@ void player_update_controls(player_t *player, controller_t *controller){
     player->face_dir = DIR_L;
     player->ctrl_dir = DIR_L;
     if(player->vx > 0){
-      player->vx -= player->ground_accel;
+      player->vx -= fmax( player->ground_decel, player->ground_accel );
     }else if(player->vx > -player->ground_speed){
       player->vx = fmax(-player->ground_speed, player->vx - player->ground_accel);
     }
@@ -175,7 +175,7 @@ void player_update_controls(player_t *player, controller_t *controller){
   
   if(player->vx > 0 && !(player->flags & BLOCKED_R)){
     player->move_dir = DIR_R;
-  }else if(player->vx < 0 && !(player->flags & BLOCKED_L)){
+  }else if(player->vx < -0 && !(player->flags & BLOCKED_L)){
     player->move_dir = DIR_L;
   }else{
     player->move_dir = DIR_X;
@@ -184,23 +184,23 @@ void player_update_controls(player_t *player, controller_t *controller){
 
 void player_select_animation(player_t *player){
   if(player->flags & BLOCKED_D){
-    if(player->move_dir == DIR_X){
-      if(player->face_dir == DIR_R){
-        sprite_anim_set(player->sprite, player->idle_r);
-      }else if(player->face_dir == DIR_L){
-        sprite_anim_set(player->sprite, player->idle_l);
-      }
-    }else if(player->move_dir == DIR_R){
+    if(player->move_dir == DIR_R & player->vx > 1){
       if(player->ctrl_dir == DIR_R){
         sprite_anim_set(player->sprite, player->move_r);
       }else{
         sprite_anim_set(player->sprite, player->skid_r);
       }
-    }else if(player->move_dir == DIR_L){
+    }else if(player->move_dir == DIR_L & player->vx < -1 ){
       if(player->ctrl_dir == DIR_L){
         sprite_anim_set(player->sprite, player->move_l);
       }else{
         sprite_anim_set(player->sprite, player->skid_l);
+      }
+    }else{
+      if(player->face_dir == DIR_R){
+        sprite_anim_set(player->sprite, player->idle_r);
+      }else if(player->face_dir == DIR_L){
+        sprite_anim_set(player->sprite, player->idle_l);
       }
     }
   }else{
