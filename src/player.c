@@ -97,7 +97,7 @@ player_t *player_create(void){
 	player->ground_accel = 0.06;
 	player->ground_decel = 0.12;
 	
-	player->jump_force = -3.5;
+	player->jump_force = -4.0;
 	player->jump_brake = -0.4;
 
 	player->face_dir = DIR_R;
