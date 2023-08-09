@@ -116,14 +116,17 @@ void core_window_resize(core_t *core, int32_t w, int32_t h){
 }
 
 void core_toggle_fullscreen(core_t *core){
+  SDL_DisplayMode mode;
+  
 	core->fullscreen = !(core->fullscreen);
 	
 	if(core->fullscreen){
 		SDL_SetWindowFullscreen(core->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		core_window_resize(core, 0, 0);
+    SDL_GetDesktopDisplayMode(0, &mode);
+		core_window_resize(core, mode.w, mode.h);
 	}else{
 		SDL_SetWindowFullscreen(core->window, false);
-		core_window_resize(core, 0, 0);
+		core_window_resize(core, core->win_vw*2, core->win_vh*2);
 	}
 }
 
