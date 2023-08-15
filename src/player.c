@@ -184,13 +184,13 @@ void player_update_controls(player_t *player, controller_t *controller){
 
 void player_select_animation(player_t *player){
   if(player->flags & BLOCKED_D){
-    if(player->move_dir == DIR_R & player->vx > 1){
+    if(player->move_dir == DIR_R && player->vx > 1){
       if(player->ctrl_dir == DIR_R){
         sprite_anim_set(player->sprite, player->move_r);
       }else{
         sprite_anim_set(player->sprite, player->skid_r);
       }
-    }else if(player->move_dir == DIR_L & player->vx < -1 ){
+    }else if(player->move_dir == DIR_L && player->vx < -1 ){
       if(player->ctrl_dir == DIR_L){
         sprite_anim_set(player->sprite, player->move_l);
       }else{
