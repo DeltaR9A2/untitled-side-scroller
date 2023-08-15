@@ -83,7 +83,7 @@ void camera_debug_rect(camera_t *camera, rect_t rect, int32_t color){
 	SDL_Rect fill_rect;
 
 	rect_copy_to_sdl(&rect, &fill_rect);
-	
+
 	fill_rect.x -= (int)camera->view->x;
 	fill_rect.y -= (int)camera->view->y;
 
@@ -91,17 +91,17 @@ void camera_debug_rect(camera_t *camera, rect_t rect, int32_t color){
 }
 
 void camera_draw_terrain_rects(camera_t *camera, game_t *game){
-    rect_t *rects = game->active_map->terrain_rects;
-    for(int i=0; i < arrlen(rects); i++){
-		camera_debug_rect(camera, rects[i], 0x33336611);
-    }
+	rect_t *rects = game->active_map->terrain_rects;
+	for(int i=0; i < arrlen(rects); i++){
+		camera_debug_rect(camera, rects[i], 0x6666FF66);
+	}
 }
 
 void camera_draw_platform_rects(camera_t *camera, game_t *game){
-    rect_t *rects = game->active_map->platform_rects;
-    for(int i=0; i < arrlen(rects); i++){
-		camera_debug_rect(camera, rects[i], 0x33336611);
-    }
+	rect_t *rects = game->active_map->platform_rects;
+	for(int i=0; i < arrlen(rects); i++){
+		camera_debug_rect(camera, rects[i], 0xFF66FF66);
+	}
 }
 
 void camera_draw_debug_info(camera_t *camera, game_t *game){
@@ -121,9 +121,9 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 	
 	#define PRINT_DEBUG_LINE font_draw_string(game->debug_font, buffer, 4, 3 + (line_no * line_h), camera->debug_buffer); line_no++;
 
-    rect_t debug_rect;
+	rect_t debug_rect;
 
-    debug_rect = core_get_window_size(game->core);
+	debug_rect = core_get_window_size(game->core);
 	sprintf(buffer, "Win Size: %ix%i", (int)debug_rect.w, (int)debug_rect.h);
 	PRINT_DEBUG_LINE
 
@@ -133,7 +133,7 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 	sprintf(buffer, "Time: %06.2fs", ((double)game->step)/100.0);
 	PRINT_DEBUG_LINE
 
-    debug_rect = *player_get_rect(game->player);
+	debug_rect = *player_get_rect(game->player);
 
 	sprintf(buffer, "Player Pos: %4.0f,%4.0f", debug_rect.x, debug_rect.y);
 	PRINT_DEBUG_LINE
