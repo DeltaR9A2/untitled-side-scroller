@@ -30,29 +30,29 @@ int main_event_watch(void *data, SDL_Event *e){
 }
 
 int main(void){
-    #ifdef DEBUG
-    printf("Game was compiled in debug mode.\n"); fflush(stdout);
-    #endif
-    
+	#ifdef DEBUG
+	printf("Game was compiled in debug mode.\n"); fflush(stdout);
+	#endif
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	core_t *core = core_get_only();
 	game_t *game = game_get_only();
 
-    controller_init();
+	controller_init();
 
-    //////////
-    parse_file("parser_test.txt");
-    //////////
+	//////////
+	parse_file("parser_test.txt");
+	//////////
 
 	SDL_AddEventWatch(&main_event_watch, game);
-	
+
 	double ms_per_frame = 10.0;
 	double curr_ms = SDL_GetTicks();
 	double prev_ms = curr_ms;
 	double ms_delta = 0;
 	double ms_accum = 0;
-	
+
 	while(core_is_running(core)){
 		prev_ms = curr_ms;
 		curr_ms = SDL_GetTicks();
@@ -65,21 +65,19 @@ int main(void){
 			controller_poll_events();
 			
 			if(ms_accum > ms_per_frame){
-				game_fast_frame(game);
+        game_fast_frame(game);
 			}else{
 				game_full_frame(game);
 				core_window_redraw(core);
 			}
 		}
-        
-        fflush(stdout);
+
+		fflush(stdout);
 	}
 
-
-	
-    player_cleanup();
-    game_cleanup();
-    core_cleanup();
+	player_cleanup();
+	game_cleanup();
+	core_cleanup();
 
 	SDL_Quit();
 	
