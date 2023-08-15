@@ -17,7 +17,7 @@
 
 // SNES STRETCH = 1.166
 
-//384/240
+// 384/240
 
 const int32_t VIRTUAL_SCREEN_W = 480;
 const int32_t VIRTUAL_SCREEN_H = 256;
@@ -48,7 +48,7 @@ static core_t *THE_CORE = NULL;
 
 core_t *core_create(void){
 	core_t *core = malloc(sizeof(core_t));
-	
+
 	core->running = true;
 	core->fullscreen = false;
 
@@ -56,7 +56,7 @@ core_t *core_create(void){
 	core->win_vh = VIRTUAL_SCREEN_H;
 	core->win_cw = core->win_vw*2;
 	core->win_ch = core->win_vh*2;
-	
+
 	core->active_rect.x = 0;
 	core->active_rect.y = 0;
 	core->active_rect.w = core->win_vw*2;
@@ -70,18 +70,18 @@ core_t *core_create(void){
 		core->win_ch,
 		SDL_WINDOW_RESIZABLE
 	);
-	
+
 	if(core->window == NULL){
 		printf("Could not create window: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-	
+
 	core->rend = SDL_CreateRenderer(core->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	
 	core->screen = create_surface(core->win_vw, core->win_vh);
 	core->screen_texture = create_streaming_texture(core->rend, core->win_vw, core->win_vh);
 
-    core_window_resize(core, core->win_vw*2, core->win_vh*2);
+	core_window_resize(core, core->win_vw*2, core->win_vh*2);
 
 	return core;
 }
@@ -103,26 +103,25 @@ double core_get_window_scale(core_t *core){
 void core_window_resize(core_t *core, int32_t w, int32_t h){
 	core->win_cw = w;
 	core->win_ch = h;
-	
+
 	double scale = core_get_window_scale(core);
-	
+
 	core->active_rect.w = (int)(scale * core->win_vw); // SNES STRETCH core->active_rect.w *= 1.1666;
 	core->active_rect.h = (int)(scale * core->win_vh);
 	core->active_rect.x = (core->win_cw - core->active_rect.w)/2;
 	core->active_rect.y = (core->win_ch - core->active_rect.h)/2;
-	
-    
+
 	//SDL_SetWindowSize(core->window, core->win_cw, core->win_ch);
 }
 
 void core_toggle_fullscreen(core_t *core){
-  SDL_DisplayMode mode;
-  
+	SDL_DisplayMode mode;
+
 	core->fullscreen = !(core->fullscreen);
-	
+
 	if(core->fullscreen){
 		SDL_SetWindowFullscreen(core->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    SDL_GetDesktopDisplayMode(0, &mode);
+		SDL_GetDesktopDisplayMode(0, &mode);
 		core_window_resize(core, mode.w, mode.h);
 	}else{
 		SDL_SetWindowFullscreen(core->window, false);
@@ -147,37 +146,37 @@ rect_t core_get_mouse_pos(core_t *core){
 
 	mx = (int)((double)mx / scale);
 	my = (int)((double)my / scale);
-	
-    return (rect_t){mx,my,0,0};
+
+	return (rect_t){mx,my,0,0};
 }
 
 
 core_t *core_get_only(void){
-    if(THE_CORE == NULL){
-        THE_CORE = core_create();
-    }
-    return THE_CORE;
+	if(THE_CORE == NULL){
+		THE_CORE = core_create();
+	}
+	return THE_CORE;
 }
 
 void core_cleanup(void){
-    if(THE_CORE != NULL){
-        core_delete(THE_CORE);
-        THE_CORE = NULL;
-    }
+	if(THE_CORE != NULL){
+		core_delete(THE_CORE);
+			THE_CORE = NULL;
+	}
 }
 
 bool core_is_running(core_t *core){
-    return core->running;
+	return core->running;
 }
 
 void core_stop_running(core_t *core){
-    core->running = false;
+	core->running = false;
 }
 
 SDL_Surface *core_get_screen_surface(core_t *core){
-    return core->screen;
+	return core->screen;
 }
 
 rect_t core_get_window_size(core_t *core){
-    return (rect_t){0,0,core->win_cw,core->win_ch};
+	return (rect_t){0,0,core->win_cw,core->win_ch};
 }
