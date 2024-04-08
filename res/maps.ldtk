@@ -4985,13 +4985,7 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [
-				{ "levelIid": "e1163a10-dbe0-11ec-bd08-11362bf412f1", "dir": "w" },
-				{ "levelIid": "111eef40-02f0-11ed-bd08-49c6bc68eea2", "dir": "s" },
-				{ "levelIid": "19db1c30-02f0-11ed-bd08-87a07cf95992", "dir": "sw" },
-				{ "levelIid": "1c57b2c0-1460-11ee-86ee-19275366028f", "dir": "se" },
-				{ "levelIid": "ae01de60-d7b0-11ee-bab4-17c215edb4d0", "dir": "e" }
-			]
+			"__neighbours": [ { "levelIid": "111eef40-02f0-11ed-bd08-49c6bc68eea2", "dir": "s" }, { "levelIid": "19db1c30-02f0-11ed-bd08-87a07cf95992", "dir": "sw" }, { "levelIid": "1c57b2c0-1460-11ee-86ee-19275366028f", "dir": "se" }, { "levelIid": "ae01de60-d7b0-11ee-bab4-17c215edb4d0", "dir": "e" } ]
 		},
 		{
 			"identifier": "map_4_3",
@@ -7510,7 +7504,6 @@
 				}
 			],
 			"__neighbours": [
-				{ "levelIid": "e1163a10-dbe0-11ec-bd08-11362bf412f1", "dir": "nw" },
 				{ "levelIid": "fb4ccda0-dbe0-11ec-bd08-2f84203b19eb", "dir": "n" },
 				{ "levelIid": "19db1c30-02f0-11ed-bd08-87a07cf95992", "dir": "w" },
 				{ "levelIid": "1c57b2c0-1460-11ee-86ee-19275366028f", "dir": "e" },
@@ -8451,13 +8444,7 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": [
-				{ "levelIid": "e1163a10-dbe0-11ec-bd08-11362bf412f1", "dir": "n" },
-				{ "levelIid": "fb4ccda0-dbe0-11ec-bd08-2f84203b19eb", "dir": "ne" },
-				{ "levelIid": "111eef40-02f0-11ed-bd08-49c6bc68eea2", "dir": "e" },
-				{ "levelIid": "1ffb96f0-1460-11ee-b438-ef17c39621d1", "dir": "se" },
-				{ "levelIid": "44373ce0-d7b0-11ee-bab4-772f01fe11bd", "dir": "s" }
-			]
+			"__neighbours": [ { "levelIid": "fb4ccda0-dbe0-11ec-bd08-2f84203b19eb", "dir": "ne" }, { "levelIid": "111eef40-02f0-11ed-bd08-49c6bc68eea2", "dir": "e" }, { "levelIid": "1ffb96f0-1460-11ee-b438-ef17c39621d1", "dir": "se" }, { "levelIid": "44373ce0-d7b0-11ee-bab4-772f01fe11bd", "dir": "s" } ]
 		},
 		{
 			"identifier": "map_16_3",
