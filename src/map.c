@@ -6,8 +6,8 @@
 #include "tinydir.h"
 
 const int32_t GRID_SIZE = 16;
-const double WORLD_CELL_W = 480.0;
-const double WORLD_CELL_H = 256.0;
+const double WORLD_CELL_W = 128.0;
+const double WORLD_CELL_H = 128.0;
 
 typedef struct cmap_t cmap_t; //= cmap means collision map 
 
