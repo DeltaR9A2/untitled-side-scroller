@@ -74,7 +74,7 @@ game_t *game_create(void){
   game->message_surface = create_surface(640-16, 6+font_get_height(game->font));
   game->message_timeout = 0;
 
-  player_move_to_rect(game->player, &((rect_t){128,128,0,0}));
+  player_move_to_rect(game->player, &((rect_t){64,64,0,0}));
   sprite_anim_set(player_get_sprite(game->player), anim_get("player_idle_r"));
   player_update(game->player, game);
 
