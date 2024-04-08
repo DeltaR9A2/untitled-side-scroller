@@ -53,6 +53,6 @@ void game_fast_frame(game_t *game);
 void game_full_frame(game_t *game);
 
 void game_set_message(game_t *game, const char *text);
-void game_select_map(game_t *game, int32_t x, int32_t y);
+void game_select_map(game_t *game, const char *map_name);
 
 #endif

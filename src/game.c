@@ -37,13 +37,10 @@ void game_set_message(game_t *game, const char *text){
   font_draw_string(game->font, game->message, 8, 4, game->message_surface);
 }
 
-void game_select_map(game_t *game, int32_t x, int32_t y){
-  map_t *map = map_load_by_coords(x, y);
+void game_select_map(game_t *game, const char* map_name){
+  map_t *map = map_load_by_name(map_name);
 
   if(map == NULL){ return; }
-    
-  game->map_world_x = map->world_x;
-  game->map_world_y = map->world_y;
     
   game->active_map = map;
   camera_limit_to(game->camera, game->active_map->rect);
@@ -63,9 +60,8 @@ game_t *game_create(void){
   game->font = font_create("font_nokia.png");
   game->debug_font = font_create("font_nokia.png");
 
-  map_preload_all();
-  game_select_map(game, 0, 0);
-
+  game_select_map(game, "default");
+  
   game->menu = menu_create_main_menu(game);
   
   camera_init(game->camera, VIRTUAL_SCREEN_W, VIRTUAL_SCREEN_H);

@@ -353,10 +353,10 @@ void player_check_for_map_transition(player_t *player, game_t *game){
       direction_adjust_y -= 1;
     }
 
-    int32_t target_world_x = starting_world_x + player_offset_x + direction_adjust_x;
-    int32_t target_world_y = starting_world_y + player_offset_y + direction_adjust_y;
+    // int32_t target_world_x = starting_world_x + player_offset_x + direction_adjust_x;
+    // int32_t target_world_y = starting_world_y + player_offset_y + direction_adjust_y;
 
-    if(map_exists_at_coords(target_world_x, target_world_y)){
+    /* if(map_exists_at_coords(target_world_x, target_world_y)){
       game_select_map(game, target_world_x, target_world_y);
           
       map_t *new_map = game->active_map;
@@ -382,7 +382,7 @@ void player_check_for_map_transition(player_t *player, game_t *game){
         rect_set_b_edge(player->rect, map_get_h(game->active_map) - MAP_ENTRY_OFFSET);
         player->rect->x += player_x_pos_correction;
       }            
-    }
+    } */
   }
 }
 

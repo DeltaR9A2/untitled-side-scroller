@@ -187,19 +187,18 @@ double map_get_cell_h(map_t *map){
 }
 
 map_t *map_load_by_name(const char *map_name){
-  map_t *map = map_create();
-    
   char map_rects_fn[1024];
-  snprintf(map_rects_fn, 1024, "./maps/%s/terrain-int.png", map_name);
-	SDL_Surface *map_rects = load_image(map_rects_fn);
+  snprintf(map_rects_fn, 1024, "./map-%s-terrain.png", map_name);
+  SDL_Surface *map_rects = load_image(map_rects_fn);
     
   if(map_rects == NULL){ 
-    map_delete(map);
     return NULL; 
   }
 
+  map_t *map = map_create();
+
   char map_image_fn[1024];
-  snprintf(map_image_fn, 1024, "./maps/%s/_composite.png", map_name);
+  snprintf(map_image_fn, 1024, "./map-%s-visual.png", map_name);
 	map->image = load_image(map_image_fn);
 
 	rect_init(map->rect, 0, 0, map_rects->w * GRID_SIZE, map_rects->h * GRID_SIZE);

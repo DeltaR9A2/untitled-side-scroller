@@ -30,4 +30,6 @@ double map_get_h(map_t *map);
 double map_get_cell_w(map_t *map);
 double map_get_cell_h(map_t *map);
 
+map_t *map_load_by_name(const char *map_name);
+
 #endif
