@@ -280,7 +280,7 @@ void player_move_and_collide_with_map(player_t *player, map_t *map){
       break;
     }
   }
-
+  
   player->rect->y += player->vy;
   for(int i=0; i<arrlen(terr_rects); i++){
         rect_t *curr_rect = &terr_rects[i];
@@ -311,27 +311,27 @@ void player_move_and_collide_with_map(player_t *player, map_t *map){
       }
     }
   }
-    
-    player->flags &= ~HIT_MAP_EDGE_MASK;
-    if(!rect_inside_of(player->rect, map_bounds)){
-        if(rect_get_r_edge(player->rect) > rect_get_r_edge(map_bounds)){
-          player->flags |= HIT_MAP_EDGE_R;
-        }else if(rect_get_l_edge(player->rect) < rect_get_l_edge(map_bounds)){
-          player->flags |= HIT_MAP_EDGE_L;
-        }
-        
-        if(rect_get_b_edge(player->rect) > rect_get_b_edge(map_bounds)){
-          player->flags |= HIT_MAP_EDGE_D;
-        }else if(rect_get_t_edge(player->rect) < rect_get_t_edge(map_bounds)){
-          player->flags |= HIT_MAP_EDGE_U;
-        }
-        
-        rect_limit_to(player->rect, map_bounds);
-    }
+  
+  player->flags &= ~HIT_MAP_EDGE_MASK;
+  if(!rect_inside_of(player->rect, map_bounds)){
+      if(rect_get_r_edge(player->rect) > rect_get_r_edge(map_bounds)){
+        player->flags |= HIT_MAP_EDGE_R;
+      }else if(rect_get_l_edge(player->rect) < rect_get_l_edge(map_bounds)){
+        player->flags |= HIT_MAP_EDGE_L;
+      }
+      
+      if(rect_get_b_edge(player->rect) > rect_get_b_edge(map_bounds)){
+        player->flags |= HIT_MAP_EDGE_D;
+      }else if(rect_get_t_edge(player->rect) < rect_get_t_edge(map_bounds)){
+        player->flags |= HIT_MAP_EDGE_U;
+      }
+      
+      rect_limit_to(player->rect, map_bounds);
+  }
 }
 
 // Player is placed this distance from the edge when entering a map.
-static const double MAP_ENTRY_OFFSET = 2;
+/* static const double MAP_ENTRY_OFFSET = 2;
 void player_check_for_map_transition(player_t *player, game_t *game){
   if(player->flags & HIT_MAP_EDGE_MASK){
     int32_t starting_world_x = game->map_world_x;
@@ -339,10 +339,10 @@ void player_check_for_map_transition(player_t *player, game_t *game){
     
     int32_t player_offset_x = (int32_t)(rect_get_mid_x(player->rect)/WORLD_CELL_W);
     int32_t player_offset_y = (int32_t)(rect_get_mid_y(player->rect)/WORLD_CELL_H);
-
+    
     int32_t direction_adjust_x = 0;
     int32_t direction_adjust_y = 0;
-  
+    
     if(player->flags & HIT_MAP_EDGE_R){
       direction_adjust_x += 1; //map_get_cell_w(game->active_map);
     }else if(player->flags & HIT_MAP_EDGE_L){
@@ -352,21 +352,21 @@ void player_check_for_map_transition(player_t *player, game_t *game){
     }else if(player->flags & HIT_MAP_EDGE_U){
       direction_adjust_y -= 1;
     }
-
-    // int32_t target_world_x = starting_world_x + player_offset_x + direction_adjust_x;
-    // int32_t target_world_y = starting_world_y + player_offset_y + direction_adjust_y;
-
-    /* if(map_exists_at_coords(target_world_x, target_world_y)){
+    
+    int32_t target_world_x = starting_world_x + player_offset_x + direction_adjust_x;
+    int32_t target_world_y = starting_world_y + player_offset_y + direction_adjust_y;
+    
+    if(map_exists_at_coords(target_world_x, target_world_y)){
       game_select_map(game, target_world_x, target_world_y);
-          
+      
       map_t *new_map = game->active_map;
-          
+      
       int32_t relative_world_x = target_world_x - new_map->world_x;
       int32_t relative_world_y = target_world_y - new_map->world_y;
-          
+      
       int32_t player_x_pos_correction = (relative_world_x - player_offset_x) * WORLD_CELL_W;
       int32_t player_y_pos_correction = (relative_world_y - player_offset_y) * WORLD_CELL_H;
-          
+      
       if(player->flags & HIT_MAP_EDGE_R){
         rect_set_l_edge(player->rect, MAP_ENTRY_OFFSET);
         player->rect->y += player_y_pos_correction;
@@ -381,15 +381,15 @@ void player_check_for_map_transition(player_t *player, game_t *game){
       }else if(player->flags & HIT_MAP_EDGE_U){
         rect_set_b_edge(player->rect, map_get_h(game->active_map) - MAP_ENTRY_OFFSET);
         player->rect->x += player_x_pos_correction;
-      }            
-    } */
+      }
+    }
   }
-}
+} */
 
 void player_update(player_t *player, game_t *game){
   player_update_controls(player, game->controller);
   player_move_and_collide_with_map(player, game->active_map);
-  player_check_for_map_transition(player, game);
+//  player_check_for_map_transition(player, game);
   player_select_animation(player);
   sprite_move_to(player->sprite, player->rect);
   sprite_anim_update(player->sprite);
