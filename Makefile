@@ -25,7 +25,7 @@ debug : export CFLAGS := $(CFLAGS) -g -Wall -Werror -D DEBUG -O0
 debug : export LFLAGS := $(LFLAGS)
 ###################
 
-.PHONY: all src res clean_src clean_res clean run $(TARGET) debug
+.PHONY: all clean run $(TARGET) debug
 
 all: $(TARGET)
 
@@ -42,8 +42,3 @@ run: $(TARGET)
 clean:
 	$(REMOVE) ./obj/*
 	$(REMOVE) ./bin/*
-
-debug: all
-
-mingw: all
-
