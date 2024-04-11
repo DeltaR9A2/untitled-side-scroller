@@ -93,12 +93,12 @@ void game_fast_frame(game_t *game){
   game->step += 1;
 
   if(game->mode == GAME_MODE_MENU){
-    if(controller_just_pressed(BTN_U)){ menu_up(game->menu); }
-    if(controller_just_pressed(BTN_D)){ menu_down(game->menu); }
-    if(controller_just_pressed(BTN_A)){ menu_activate(game->menu); }
-    if(controller_just_pressed(BTN_START)){ menu_activate(game->menu); }
+    if(input_just_pressed(BTN_U)){ menu_up(game->menu); }
+    if(input_just_pressed(BTN_D)){ menu_down(game->menu); }
+    if(input_just_pressed(BTN_A)){ menu_activate(game->menu); }
+    if(input_just_pressed(BTN_START)){ menu_activate(game->menu); }
   }else if(game->mode == GAME_MODE_PLAY){
-    if(controller_just_pressed(BTN_START)){
+    if(input_just_pressed(BTN_START)){
       game->mode = GAME_MODE_MENU;
       camera_set_fade(game->camera, 0x000000AA);
       return;

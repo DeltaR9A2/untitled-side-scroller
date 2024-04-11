@@ -127,28 +127,28 @@ void player_delete(player_t *player){
   free(player);
 }
 
-void player_update_controls(player_t *player, controller_t *controller){
+void player_update_controls(player_t *player, input_t *input){
   player->flags &= ~PLAT_DROP;
 
   if(player->vy < player->fall_speed){
     player->vy = fmin(player->fall_speed, player->vy + player->fall_accel);
   }
 
-  if(controller_pressed(BTN_D)){
+  if(input_pressed(BTN_D)){
     player->flags |= PLAT_DROP;
   }
   
-  if(controller_just_pressed(BTN_U)){
-    if(player->flags & BLOCKED_D && controller_released(BTN_D)){
+  if(input_just_pressed(BTN_U)){
+    if(player->flags & BLOCKED_D && input_released(BTN_D)){
       player->vy = player->jump_force;
     }
-  }else if(controller_just_released(BTN_U)){
+  }else if(input_just_released(BTN_U)){
     if(player->vy < player->jump_brake){
       player->vy = player->jump_brake;
     }
   }
   
-  if(controller_pressed(BTN_R)){
+  if(input_pressed(BTN_R)){
     player->face_dir = DIR_R;
     player->ctrl_dir = DIR_R;
     if(player->vx < 0){
@@ -156,7 +156,7 @@ void player_update_controls(player_t *player, controller_t *controller){
     }else if(player->vx < player->ground_speed){
       player->vx = fmin(player->ground_speed, player->vx + player->ground_accel);
     }
-  }else if(controller_pressed(BTN_L)){
+  }else if(input_pressed(BTN_L)){
     player->face_dir = DIR_L;
     player->ctrl_dir = DIR_L;
     if(player->vx > 0){
@@ -387,7 +387,7 @@ void player_check_for_map_transition(player_t *player, game_t *game){
 } */
 
 void player_update(player_t *player, game_t *game){
-  player_update_controls(player, game->controller);
+  player_update_controls(player, game->input);
   player_move_and_collide_with_map(player, game->active_map);
 //  player_check_for_map_transition(player, game);
   player_select_animation(player);

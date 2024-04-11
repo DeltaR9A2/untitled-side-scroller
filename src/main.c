@@ -9,7 +9,7 @@
 
 #include "core.h"
 #include "game.h"
-#include "controller.h"
+#include "input.h"
 #include "parser.h"
 
 int main_event_watch(void *data, SDL_Event *e){
@@ -39,7 +39,7 @@ int main(void){
 	core_t *core = core_get_only();
 	game_t *game = game_get_only();
 
-	controller_init();
+	input_init();
 
 	//////////
 	parse_file("parser_test.txt");
@@ -62,7 +62,7 @@ int main(void){
 		if(ms_accum > ms_per_frame){
 			ms_accum -= ms_per_frame;
 
-			controller_poll_events();
+			input_poll_events();
 			
 			if(ms_accum > ms_per_frame){
         game_fast_frame(game);

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "controller.h"
+#include "input.h"
 
 uint32_t KEYMAP_L = SDL_SCANCODE_LEFT;
 uint32_t KEYMAP_R = SDL_SCANCODE_RIGHT;
@@ -46,42 +46,42 @@ const uint32_t BTN_START = 0x00008000;
 
 const uint32_t BTN_NONE = 0x00000000;
 
-struct controller_t{
+struct input_t{
 	uint32_t pressed;
 	uint32_t previous;
 };
 
-static controller_t CN;
+static input_t CN;
 
-void controller_init(void){
+void input_init(void){
 	CN.pressed = BTN_NONE;
 	CN.previous = BTN_NONE;
 	
 	SDL_JoystickOpen(0);
 }
 
-bool controller_pressed(uint32_t buttons){
+bool input_pressed(uint32_t buttons){
 	return ((CN.pressed & buttons) == buttons);
 }
 
-bool controller_released(uint32_t buttons){
+bool input_released(uint32_t buttons){
 	return !((CN.pressed & buttons) == buttons);
 }
 
-bool controller_just_pressed(uint32_t buttons){
+bool input_just_pressed(uint32_t buttons){
 	return ((CN.pressed & buttons) == buttons) && !((CN.previous & buttons) == buttons);
 }
 
-bool controller_just_released(uint32_t buttons){
+bool input_just_released(uint32_t buttons){
 	return !((CN.pressed & buttons) == buttons) && ((CN.previous & buttons) == buttons);
 }
 
-void controller_reset(void){
+void input_reset(void){
 	CN.pressed = BTN_NONE;
 	CN.previous = BTN_NONE;
 }
 
-void controller_poll_events(void){
+void input_poll_events(void){
 	SDL_Event e;
 
 	CN.previous = CN.pressed;

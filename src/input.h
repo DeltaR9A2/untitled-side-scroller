@@ -1,5 +1,5 @@
-#ifndef controller_h
-#define controller_h
+#ifndef input_h
+#define input_h
 
 #include <stdbool.h>
 
@@ -47,17 +47,17 @@ extern const uint32_t BTN_START;
 
 extern const uint32_t BTN_NONE;
 
-typedef struct controller_t controller_t;
+typedef struct input_t input_t;
 
-void controller_init(void);
+void input_init(void);
 
-void controller_reset(void);
-void controller_poll_events(void);
+void input_reset(void);
+void input_poll_events(void);
 
-bool controller_pressed(uint32_t buttons);
-bool controller_released(uint32_t buttons);
+bool input_pressed(uint32_t buttons);
+bool input_released(uint32_t buttons);
 
-bool controller_just_pressed(uint32_t buttons);
-bool controller_just_released(uint32_t buttons);
+bool input_just_pressed(uint32_t buttons);
+bool input_just_released(uint32_t buttons);
 
 #endif

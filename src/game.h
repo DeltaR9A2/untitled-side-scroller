@@ -16,7 +16,7 @@ extern const uint32_t GAME_MESSAGE_LEN;
 #include "menu.h"
 #include "camera.h"
 #include "player.h"
-#include "controller.h"
+#include "input.h"
 #include "map.h"
 #include "target.h"
 
@@ -28,7 +28,7 @@ struct game_t{
 	font_t *font;
 	font_t *debug_font;
 
-	controller_t *controller;
+	input_t *input;
 	
 	menu_t *menu;
 	
