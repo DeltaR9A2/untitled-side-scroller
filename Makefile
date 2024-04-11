@@ -29,27 +29,19 @@ debug : export LFLAGS := $(LFLAGS)
 
 all: $(TARGET)
 
-res:
-	cp ./res/* ./bin/
-
-src: $(OBJECTS)
-
 ./obj/%.o: ./src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TARGET): src res
+$(TARGET): $(OBJECTS)
 	$(CC) ./obj/*.o $(LFLAGS) -o ./bin/$@
+	cp ./res/* ./bin/
 
 run: $(TARGET)
 	@(cd bin/ && exec ./$(TARGET))
 
-clean_src:
-	$(MAKE) -C src clean
-	$(REMOVE) ./bin/$(TARGET)
-
-clean: clean_src clean_res
-	$(REMOVE) ./bin/*
+clean:
 	$(REMOVE) ./obj/*
+	$(REMOVE) ./bin/*
 
 debug: all
 
