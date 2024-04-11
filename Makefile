@@ -17,6 +17,9 @@ export LFLAGS := -Wl,-rpath='$$ORIGIN/lib' `$(PC) --libs $(PACKAGES)` -lm
 export REMOVE  := rm -rf
 ###############################
 
+SOURCES := $(wildcard ./src/*.c)
+OBJECTS := $(SOURCES:./src/%.c=./obj/%.o)
+
 # Debug Flags #####
 debug : export CFLAGS := $(CFLAGS) -g -Wall -Werror -D DEBUG -O0
 debug : export LFLAGS := $(LFLAGS)
@@ -27,10 +30,12 @@ debug : export LFLAGS := $(LFLAGS)
 all: $(TARGET)
 
 res:
-	$(MAKE) -C res
+	cp ./res/* ./bin/
 
-src:
-	$(MAKE) -C src
+src: $(OBJECTS)
+
+./obj/%.o: ./src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET): src res
 	$(CC) ./obj/*.o $(LFLAGS) -o ./bin/$@
@@ -41,9 +46,6 @@ run: $(TARGET)
 clean_src:
 	$(MAKE) -C src clean
 	$(REMOVE) ./bin/$(TARGET)
-
-clean_res:
-	$(MAKE) -C res clean
 
 clean: clean_src clean_res
 	$(REMOVE) ./bin/*
