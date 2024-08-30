@@ -107,9 +107,9 @@ void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects){
 	
 	CMAP_ITERATION_START;
 
-    current_rect = rect_create();
-
 	if(cmap->data[i] == 1){
+		current_rect = rect_create();
+
 		rect_init(current_rect, x, y, 1, 1);
 		
 		while(cmap_rect_check(cmap, current_rect)){
@@ -128,10 +128,10 @@ void cmap_add_to_rect_list(cmap_t *cmap, rect_t **rects){
 		current_rect->y *= GRID_SIZE;
 		current_rect->w *= GRID_SIZE;
 		current_rect->h *= GRID_SIZE;
+
+		arrput(*rects, *current_rect);
 	}
 	
-  arrput(*rects, *current_rect);
-    
 	CMAP_ITERATION_STOP;
 }
 
