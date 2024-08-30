@@ -20,11 +20,6 @@ export REMOVE  := rm -rf
 SOURCES := $(wildcard ./src/*.c)
 OBJECTS := $(SOURCES:./src/%.c=./obj/%.o)
 
-# Debug Flags #####
-debug : export CFLAGS := $(CFLAGS) -g -Wall -Werror -D DEBUG -O0
-debug : export LFLAGS := $(LFLAGS)
-###################
-
 .PHONY: all clean run $(TARGET) debug
 
 all: $(TARGET)
