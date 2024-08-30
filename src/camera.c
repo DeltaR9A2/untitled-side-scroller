@@ -9,11 +9,8 @@ struct camera_t{
 	rect_t *bounds;
 	SDL_Surface *buffer;
 	SDL_Surface *fade_buffer;
-
-	#ifdef DEBUG
-	SDL_Surface *debug_buffer;
-	#endif
 };
+
 void camera_look_at(camera_t *camera, rect_t *rect){
     rect_move_to(camera->view, rect);
 }
@@ -32,10 +29,6 @@ camera_t *camera_create(void){
 	camera->bounds = rect_create();
 	camera->buffer = NULL;
 	camera->fade_buffer = NULL;
-    
-	#ifdef DEBUG
-	camera->debug_buffer = NULL;
-	#endif
 	
 	return camera;
 }
@@ -47,20 +40,12 @@ void camera_init(camera_t *camera, int32_t w, int32_t h){
 	camera->fade_buffer = create_surface(w, h);
 	
 	camera_set_fade(camera, 0x00000000);
-	
-	#ifdef DEBUG
-	camera->debug_buffer = create_surface(w, h);
-	#endif
 }
 
 void camera_delete(camera_t *camera){
 	rect_delete(camera->view);
 	SDL_FreeSurface(camera->buffer);
 	SDL_FreeSurface(camera->fade_buffer);
-
-	#ifdef DEBUG
-	SDL_FreeSurface(camera->debug_buffer);
-	#endif
 }
 
 void camera_set_fade(camera_t *camera, int32_t color){
@@ -78,8 +63,7 @@ void camera_fill_rect(camera_t *camera, rect_t *rect, int32_t color){
 	SDL_FillRect(camera->buffer, &fill_rect, color);
 }
 
-#ifdef DEBUG
-void camera_debug_rect(camera_t *camera, rect_t rect, int32_t color){
+void camera_draw_rect(camera_t *camera, rect_t rect, int32_t color){
 	SDL_Rect fill_rect;
 
 	rect_copy_to_sdl(&rect, &fill_rect);
@@ -87,23 +71,24 @@ void camera_debug_rect(camera_t *camera, rect_t rect, int32_t color){
 	fill_rect.x -= (int)camera->view->x;
 	fill_rect.y -= (int)camera->view->y;
 
-	SDL_FillRect(camera->debug_buffer, &fill_rect, color);
+	SDL_FillRect(camera->buffer, &fill_rect, color);
 }
 
 void camera_draw_terrain_rects(camera_t *camera, game_t *game){
 	rect_t *rects = game->active_map->terrain_rects;
 	for(int i=0; i < arrlen(rects); i++){
-		camera_debug_rect(camera, rects[i], 0x6666FF66);
+		camera_draw_rect(camera, rects[i], 0x6666FFFF);
 	}
 }
 
 void camera_draw_platform_rects(camera_t *camera, game_t *game){
 	rect_t *rects = game->active_map->platform_rects;
 	for(int i=0; i < arrlen(rects); i++){
-		camera_debug_rect(camera, rects[i], 0xFF66FF66);
+		camera_draw_rect(camera, rects[i], 0xFF66FFFF);
 	}
 }
 
+/*
 void camera_draw_debug_info(camera_t *camera, game_t *game){
 	SDL_Rect fill_rect;
 
@@ -140,7 +125,7 @@ void camera_draw_debug_info(camera_t *camera, game_t *game){
 
 	#undef PRINT_DEBUG_LINE
 }
-#endif
+*/
 
 void camera_draw_sprite(camera_t *camera, sprite_t *sprite){
 	sprite_draw(sprite, camera->buffer, (int)camera->view->x, (int)camera->view->y);
@@ -158,11 +143,8 @@ void camera_draw_surface(camera_t *camera, SDL_Surface *surface){
 }
 
 void camera_draw_player(camera_t *camera, player_t *player){
+    camera_draw_rect(camera, *player_get_rect(player), 0xFFAA33FF);
 	camera_draw_sprite(camera, player_get_sprite(player));
-
-    #ifdef DEBUG
-    camera_debug_rect(camera, *player_get_rect(player), 0xFFAA3333);
-    #endif
 }
 
 void camera_draw_game(camera_t *camera, game_t *game){
@@ -171,24 +153,15 @@ void camera_draw_game(camera_t *camera, game_t *game){
 
 	SDL_FillRect(camera->buffer, NULL, 0x111111FF);
 
-	#ifdef DEBUG
-	SDL_FillRect(camera->debug_buffer, NULL, 0x00000000);
-	#endif
-
 	rect_limit_to(camera->view, camera->bounds);
 
-	#ifdef DEBUG
 	camera_draw_terrain_rects(camera, game);
 	camera_draw_platform_rects(camera, game);
-	#endif
 	
 	camera_draw_surface(camera, game->active_map->image);
 	camera_draw_player(camera, game->player);
 
-	#ifdef DEBUG
-	camera_draw_debug_info(camera, game);
-	SDL_BlitSurface(camera->debug_buffer, NULL, camera->buffer, NULL);
-	#endif
+	//camera_draw_debug_info(camera, game);
 
     SDL_BlitSurface(camera->fade_buffer, NULL, camera->buffer, NULL);
 }
