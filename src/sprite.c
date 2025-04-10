@@ -19,9 +19,7 @@ SDL_Surface *convert_surface(SDL_Surface *src){
 }
 
 SDL_Surface *load_image(const char *fn){
-    #ifdef DEBUG
     printf("Loading image: %s\n", fn); fflush(stdout);
-    #endif
     
 	SDL_Surface *image = shget(image_cache, fn);
 

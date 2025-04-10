@@ -56,23 +56,21 @@ static void load_player_animations(void){
   if(animations_are_loaded == false){
     animations_are_loaded = true;
         
-    fset_t *player_frames = fset_load("player_warrior.png", 8, 8);
+    fset_t *player_frames = fset_load("player-prisoner.png", 8, 8);
     
-    anim_create("player_idle_r", player_frames,  0, 6, 10);
+    anim_create("player_idle_r", player_frames,  0, 8, 10);
     anim_create("player_move_r", player_frames,  8, 8, 10);
-    anim_create("player_skid_r", player_frames,  6, 1, 10);
+    anim_create("player_jump_r", player_frames, 16, 2, 10);
+    anim_create("player_hang_r", player_frames, 18, 2, 10);
+    anim_create("player_fall_r", player_frames, 20, 2, 10);
+    anim_create("player_skid_r", player_frames, 22, 1, 10);
 
-    anim_create("player_jump_r", player_frames, 16, 3, 10);
-    anim_create("player_hang_r", player_frames, 19, 2, 10);
-    anim_create("player_fall_r", player_frames, 21, 3, 10);
-
-    anim_create("player_idle_l", player_frames, 32, 6, 10);
+    anim_create("player_idle_l", player_frames, 32, 8, 10);
     anim_create("player_move_l", player_frames, 40, 8, 10);
-    anim_create("player_skid_l", player_frames, 38, 1, 10);
-
-    anim_create("player_jump_l", player_frames, 48, 3, 10);
-    anim_create("player_hang_l", player_frames, 51, 2, 10);
-    anim_create("player_fall_l", player_frames, 53, 3, 10);
+    anim_create("player_jump_l", player_frames, 48, 2, 10);
+    anim_create("player_hang_l", player_frames, 50, 2, 10);
+    anim_create("player_fall_l", player_frames, 52, 2, 10);
+    anim_create("player_skid_l", player_frames, 54, 2, 10);
   }
 }
 
@@ -95,7 +93,7 @@ player_t *player_create(void){
   
   player->ground_speed = 2.25;
   player->ground_accel = 0.08;
-  player->ground_decel = 0.12;
+  player->ground_decel = 0.10;
   
   player->jump_force = -4.0;
   player->jump_brake = -0.4;

@@ -6,6 +6,8 @@
 #include "game.h"
 #include "rect.h"
 
+#include "stb_ds.h"
+
 static game_t *THE_GAME;
 
 const uint32_t GAME_MODE_MENU = 0;
@@ -60,8 +62,11 @@ game_t *game_create(void){
   game->font = font_create("font_nokia.png");
   game->debug_font = font_create("font_nokia.png");
 
-  game_select_map(game, "default");
-  
+  game_select_map(game, "medium");
+  /////
+  printf("Terrain Rect Count:  %i \n", arrlen(game->active_map->terrain_rects));
+  printf("Platform Rect Count: %i \n", arrlen(game->active_map->platform_rects));
+  /////
   game->menu = menu_create_main_menu(game);
   
   camera_init(game->camera, VIRTUAL_SCREEN_W, VIRTUAL_SCREEN_H);

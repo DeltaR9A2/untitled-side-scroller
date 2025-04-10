@@ -3,9 +3,9 @@
 #include "map.h"
 #include "sprite.h"
 #include "stb_ds.h"
-#include "tinydir.h"
+//#include "tinydir.h"
 
-const int32_t GRID_SIZE = 16; // 1px terrain = GRID_SIZE px visual
+const int32_t GRID_SIZE = 8; // 1px terrain = GRID_SIZE px visual
 
 typedef struct cmap_t{ // cmap means collision map 
 	int32_t w, h;
